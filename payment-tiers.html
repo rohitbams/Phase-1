@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Plans & Tiers | KlashOut Phase 1</title>
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                    <li><a href="payment-tiers.html" class="active">Payment Plans &amp; Tiers</a></li>
+                    <li><a href="cost-optimization.html">Cost Optimization</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1>Payment Plans & Klasher Tiers</h1>
+            <p class="subtitle">User tier system, feature access, and upgrade mechanisms</p>
+        </header>
+
+        <div class="container">
+
+            <div class="alert alert-warning">
+                <strong>⚠️ CRITICAL UNDEFINED ELEMENT</strong><br>
+                The upgrade mechanism (achievement-based vs paid subscription vs application) and pricing structure are <strong>NOT DEFINED</strong> in any source document. This page documents the tier features as specified, but the commercial model requires Lincoln's clarification before Phase 2.
+            </div>
+
+            <!-- Tier Comparison Overview -->
+            <section class="section">
+                <h2>Klasher Tier Comparison</h2>
+                <p><strong>Source:</strong> BRD (3 Jan 2026, Page 2-3) + Gaming Mechanic Document</p>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th><span class="badge badge-tier-klasher">Klasher</span></th>
+                            <th><span class="badge badge-tier-independent">Independent Klasher</span></th>
+                            <th><span class="badge badge-tier-super">Super Klasher</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Maximum Participants per Klash</strong></td>
+                            <td>50</td>
+                            <td>50</td>
+                            <td>Unlimited</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Music Upload</strong></td>
+                            <td>❌ No</td>
+                            <td>✅ Yes</td>
+                            <td>❌ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Klash Coin Threshold</strong></td>
+                            <td>1,000 followers + 1,000 wins</td>
+                            <td>None (immediate)</td>
+                            <td>None (immediate)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Host Revenue Share</strong></td>
+                            <td>❌ No</td>
+                            <td>❌ No</td>
+                            <td>✅ Yes (percentage of every klash organized)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Set Entry Stakes</strong></td>
+                            <td>❌ No</td>
+                            <td>❌ No</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Top 40 Independent Charts</strong></td>
+                            <td>❌ No</td>
+                            <td>✅ Yes</td>
+                            <td>❌ No</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Go Live</strong></td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes + Showcase</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Organise Klashes</strong></td>
+                            <td>✅ Yes (limited)</td>
+                            <td>✅ Yes (limited)</td>
+                            <td>✅ Yes (unlimited)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>All Genres Access</strong></td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Messaging</strong></td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes</td>
+                            <td>✅ Yes</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Tier Details -->
+            <section class="section">
+                <h2>Tier Descriptions</h2>
+
+                <div class="subsection">
+                    <h3><span class="badge badge-tier-klasher">Klasher (Standard)</span></h3>
+                    <p><strong>Visual Identifier:</strong> KO Blue box</p>
+                    <p><strong>Target User:</strong> Music enthusiasts, casual competitors, social users</p>
+
+                    <h4>Core Features</h4>
+                    <ul>
+                        <li>Create and manage user profile</li>
+                        <li>Organize klashes with up to 50 participants</li>
+                        <li>Spectate, join, and compete in klashes</li>
+                        <li>Access all music genres in real-time</li>
+                        <li>30/60/90 second klash durations</li>
+                        <li>Create and share playlists</li>
+                        <li>Follow other users</li>
+                        <li>Live messaging</li>
+                        <li>Join KO-organised klashes</li>
+                        <li>Go Live feature</li>
+                    </ul>
+
+                    <h4>Klash Coin Restrictions</h4>
+                    <ul>
+                        <li><strong>To Earn:</strong> Minimum 1,000 followers AND 1,000 wins required</li>
+                        <li><strong>To Gift:</strong> Minimum 1,000 followers AND 1,000 wins required</li>
+                        <li><strong>To Spend:</strong> Can purchase and spend coins without threshold</li>
+                    </ul>
+
+                    <h4>Limitations</h4>
+                    <ul>
+                        <li>Cannot upload own music</li>
+                        <li>Cannot host unlimited-participant klashes</li>
+                        <li>Cannot earn hosting fees</li>
+                        <li>Cannot set entry stakes</li>
+                        <li>Must invite at least 1 friend to commence klashing</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3><span class="badge badge-tier-independent">Independent Klasher</span></h3>
+                    <p><strong>Visual Identifier:</strong> Purple box (or half purple/half blue if also Klasher)</p>
+                    <p><strong>Target User:</strong> Independent artists, music creators, promotional users</p>
+
+                    <h4>All Klasher Features PLUS:</h4>
+                    <ul>
+                        <li><strong>Music Upload:</strong> Upload and promote own music (3 tracks maximum at one time)</li>
+                        <li><strong>Top 40 Klash Charts:</strong> Eligible for independent music charts</li>
+                        <li><strong>Klash Own Music:</strong> Compete using uploaded tracks</li>
+                        <li><strong>No Coin Threshold:</strong> Gift and receive Klash Coins immediately (no follower/win requirement)</li>
+                        <li><strong>Unit Revenue:</strong> Earn from music sales/streams</li>
+                        <li><strong>Go Live Showcase:</strong> Paid performance feature for showcasing talent</li>
+                    </ul>
+
+                    <h4>Upload Constraints</h4>
+                    <ul>
+                        <li>Maximum 3 songs/tracks uploaded at one time (server load management)</li>
+                        <li>90-day retention period (tracks reviewed based on plays, downloads, coins gifted, klashes, likes)</li>
+                        <li>Monthly analytics report provided</li>
+                        <li>Supported formats: TBD with Lincoln (see Q3.1)</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3><span class="badge badge-tier-super">Super Klasher</span></h3>
+                    <p><strong>Visual Identifier:</strong> Indigo box</p>
+                    <p><strong>Target User:</strong> Event hosts, influencers, professional klashers</p>
+
+                    <h4>All Klasher Features PLUS:</h4>
+                    <ul>
+                        <li><strong>Unlimited Participants:</strong> Host klashes with no participant cap</li>
+                        <li><strong>Set Entry Stakes:</strong> Define joining fees for each hosted klash</li>
+                        <li><strong>Host Revenue:</strong> Receive percentage of every klash organized</li>
+                        <li><strong>No Coin Threshold:</strong> Gift and receive Klash Coins immediately</li>
+                        <li><strong>Go Live:</strong> Access to live streaming features</li>
+                    </ul>
+
+                    <h4>Revenue Model</h4>
+                    <p><strong>Source:</strong> Coin Wallet Document (27 May 2026)</p>
+                    <ul>
+                        <li>Super Klasher receives a percentage of the <strong>hosting fee</strong></li>
+                        <li>Super Klasher receives a percentage of the <strong>winnings</strong></li>
+                        <li>Entry fees deposited into escrow pot → distributed to 1st/2nd/3rd place + host fee</li>
+                        <li><strong>Exact percentages:</strong> UNDEFINED — see Q8.3</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Upgrade Mechanism -->
+            <section class="section">
+                <h2>Tier Upgrade Mechanism</h2>
+                <div class="alert alert-danger">
+                    <strong>🔴 BLOCKING QUESTION</strong><br>
+                    The process for upgrading between tiers is <strong>NOT DEFINED</strong> in any source document.
+                </div>
+
+                <h3>What We Know</h3>
+                <p><strong>Source:</strong> BRD (Page 3)</p>
+                <blockquote>
+                    "To elevate from klasher to super klasher is a different phase built on the of number of followers and klash wins."
+                </blockquote>
+
+                <h3>What We Don't Know (Critical for Phase 2)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Question</th>
+                            <th>Options</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Q: How does a user become an Independent Klasher?</strong></td>
+                            <td>
+                                <ul>
+                                    <li>Paid subscription?</li>
+                                    <li>One-time payment?</li>
+                                    <li>Application + approval?</li>
+                                    <li>Automatic upgrade?</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Determines payment flow, verification requirements, approval workflow
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q: How does a user become a Super Klasher?</strong></td>
+                            <td>
+                                <ul>
+                                    <li>Achievement-based (X followers + Y wins)?</li>
+                                    <li>Paid subscription?</li>
+                                    <li>Application + approval?</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Determines tier assignment logic, payment processing, qualification tracking
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q: Can a user hold multiple tiers simultaneously?</strong></td>
+                            <td>
+                                <ul>
+                                    <li>Yes (BRD mentions "half purple/half indigo" for Independent + Super)</li>
+                                    <li>If yes, how does a user acquire both?</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Data model complexity, UI display, feature access logic
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q: Is there a monthly subscription fee?</strong></td>
+                            <td>
+                                <ul>
+                                    <li>Free tiers with in-app purchases?</li>
+                                    <li>Monthly/annual subscriptions?</li>
+                                    <li>One-time tier unlock?</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Payment processor integration, recurring billing, cancellation flow
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>Q: Can users downgrade tiers?</strong></td>
+                            <td>
+                                <ul>
+                                    <li>Voluntary downgrade?</li>
+                                    <li>Automatic downgrade (e.g., subscription lapsed)?</li>
+                                    <li>Permanent unlock?</li>
+                                </ul>
+                            </td>
+                            <td>
+                                Refund policy, data retention, feature access revocation
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Reference:</strong> Question Q1.4 in <a href="questions-for-lincoln.html#q1-4">Questions for Lincoln</a></p>
+            </section>
+
+            <!-- Colour Scheme -->
+            <section class="section">
+                <h2>Visual Tier Identification</h2>
+                <p><strong>Source:</strong> BRD (Page 3, 6)</p>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tier Combination</th>
+                            <th>KO Box Colour</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Klasher Only</strong></td>
+                            <td><span class="badge badge-tier-klasher">KO Blue</span></td>
+                            <td>Standard tier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Independent Klasher Only</strong></td>
+                            <td><span class="badge badge-tier-independent">Purple</span></td>
+                            <td>Music creator tier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Super Klasher Only</strong></td>
+                            <td><span class="badge badge-tier-super">Indigo</span></td>
+                            <td>Event host tier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Independent + Super Klasher</strong></td>
+                            <td><span class="badge badge-tier-mixed">Half Purple / Half Indigo</span></td>
+                            <td>Combined creator + host tier</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Independent + Klasher</strong></td>
+                            <td><span class="badge badge-tier-mixed">Half Purple / Half KO Blue</span></td>
+                            <td>Combined creator + standard tier</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Note:</strong> "If touched on it, it shows the full background of each the Klashers. The main reasons these colours are mixed, it to indicate exactly which kind of Klasher they are." (BRD Page 3)</p>
+            </section>
+
+            <!-- App Store Compliance -->
+            <section class="section">
+                <h2>App Store In-App Purchase Compliance</h2>
+                <p><strong>Source:</strong> Requirements Document (Domain Requirement D03)</p>
+
+                <div class="alert alert-warning">
+                    <strong>⚠️ REGULATORY CONSTRAINT</strong><br>
+                    If tiers are sold as in-app purchases on iOS/Android, Apple and Google take 15-30% commission. This significantly impacts the pricing model.
+                </div>
+
+                <h3>Apple App Store IAP Policy</h3>
+                <ul>
+                    <li><strong>Commission:</strong> 30% (first year) → 15% (subsequent years for subscriptions)</li>
+                    <li><strong>Small Business Program:</strong> 15% for developers earning <$1M/year</li>
+                    <li><strong>Requirement:</strong> All digital goods/services MUST use Apple IAP (cannot bypass to external payment)</li>
+                </ul>
+
+                <h3>Google Play Store IAP Policy</h3>
+                <ul>
+                    <li><strong>Commission:</strong> 30% (standard) → 15% (subscriptions after year 1, or apps <$1M revenue)</li>
+                    <li><strong>Requirement:</strong> All digital goods/services MUST use Google Play Billing</li>
+                </ul>
+
+                <h3>Impact on KO</h3>
+                <p>If a user purchases a tier upgrade for £10 on iOS:</p>
+                <ul>
+                    <li>Apple takes £3 (30%) or £1.50 (15%)</li>
+                    <li>KO receives £7 or £8.50</li>
+                </ul>
+
+                <p><strong>Mitigation Strategies (Require Lincoln's Decision):</strong></p>
+                <ul>
+                    <li>Price tiers higher on mobile to offset commission</li>
+                    <li>Encourage web-based tier purchases (no commission)</li>
+                    <li>Absorb the cost and accept lower margins on mobile</li>
+                    <li>Make tier upgrades achievement-based (free) instead of paid</li>
+                </ul>
+            </section>
+
+            <!-- Data Model Impact -->
+            <section class="section">
+                <h2>Data Model Implementation</h2>
+                <p><strong>Reference:</strong> <a href="data-model.html">Data Model & ERD</a></p>
+
+                <h3>Current Design Decision</h3>
+                <p><strong>Tier is an attribute of User, not an entity.</strong></p>
+
+                <div class="code-block">
+                    <pre><code>CREATE TABLE users (
+  id UUID PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  tier VARCHAR(20) NOT NULL DEFAULT 'KLASHER',
+  CHECK (tier IN ('KLASHER', 'INDEPENDENT', 'SUPER'))
+);</code></pre>
+                </div>
+
+                <h3>Rationale</h3>
+                <ul>
+                    <li>Only 3 fixed tier values with no additional data of their own</li>
+                    <li>No need for a separate <code>tiers</code> table</li>
+                    <li>Tier-specific features controlled via application logic</li>
+                </ul>
+
+                <h3>If Multiple Tiers Allowed Simultaneously</h3>
+                <p>Would require a junction table:</p>
+
+                <div class="code-block">
+                    <pre><code>CREATE TABLE user_tiers (
+  user_id UUID REFERENCES users(id),
+  tier VARCHAR(20) NOT NULL,
+  activated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (user_id, tier)
+);</code></pre>
+                </div>
+
+                <p><strong>Decision Required:</strong> Single tier vs multiple tiers per user (see Q1.4)</p>
+            </section>
+
+            <!-- Open Questions Summary -->
+            <section class="section">
+                <h2>Summary of Blocking Questions</h2>
+                <p>The following questions MUST be resolved with Lincoln before Phase 2 implementation:</p>
+
+                <ol>
+                    <li><strong>Q1.4:</strong> How does a user upgrade between tiers? (Achievement vs Payment vs Application)</li>
+                    <li><strong>Q8.3:</strong> What percentage does a Super Klasher receive from hosting fees and winnings?</li>
+                    <li><strong>Q8.4:</strong> What are the exact subscription prices (if applicable) for each tier?</li>
+                    <li><strong>Q8.5:</strong> Can a user hold multiple tiers simultaneously?</li>
+                    <li><strong>Q8.6:</strong> What is the pricing strategy for mobile vs web (given 15-30% app store commission)?</li>
+                </ol>
+
+                <p><strong>Full list:</strong> <a href="questions-for-lincoln.html">Questions for Lincoln</a></p>
+            </section>
+
+            <footer class="footer">
+                <p>KlashOut Phase 1 Discovery • Last Updated: 20 July 2026</p>
+            </footer>
+        </div>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
+</body>
+</html>

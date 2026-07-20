@@ -31,6 +31,8 @@
                     <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
                     <li><a href="data-model.html">Data Model &amp; ERD</a></li>
                     <li><a href="reference.html">Reference Tables</a></li>
+                    <li><a href="payment-tiers.html">Payment Plans &amp; Tiers</a></li>
+                    <li><a href="cost-optimization.html">Cost Optimization</a></li>
                 </ul>
             </div>
             <div class="nav-section">
@@ -77,17 +79,20 @@
                 <div class="collapsible-header">
                     <div class="collapsible-title">
                         <span class="collapsible-icon">▶</span>
-                        <span><strong>C01:</strong> FCA / Wallet Technology Approach 🔴 HIGHEST RISK</span>
+                        <span><strong>C01:</strong> FCA / Wallet Technology Approach ✅ RESOLVED</span>
                     </div>
-                    <span class="badge badge-blocked">BLOCKING</span>
+                    <span class="badge badge-completed">RESOLVED</span>
                 </div>
                 <div class="collapsible-content">
                     <div class="collapsible-body">
-                        <div class="alert alert-critical">
-                            <div class="alert-title">⚠️ Regulatory Stakes</div>
-                            <p>This contradiction affects FCA compliance, entire wallet design, and technology stack.</p>
+                        <div class="alert alert-info">
+                            <div class="alert-title">✅ Resolution Confirmed</div>
+                            <p><strong>Date:</strong> 27 May 2026<br>
+                            <strong>Source:</strong> RD document for Rohit Coin Wallet 27_5_2026.doc.pdf<br>
+                            <strong>Decision:</strong> 1:1 fiat-backed wallet (NOT blockchain)</p>
                         </div>
 
+                        <h4 class="mt-3">Original Contradiction</h4>
                         <table>
                             <thead>
                                 <tr>
@@ -107,43 +112,29 @@
                                     <td>"The coin is a <strong>1 to 1 fiat rate</strong> (currency) which is backed by the users at phase 1"</td>
                                     <td>Wallet & Coin UX doc, Line 7</td>
                                 </tr>
-                            </tbody>
-                        </table>
-
-                        <h4 class="mt-3">Why This Is a Contradiction</h4>
-                        <p>Ethereum/blockchain = cryptocurrency (volatile, decentralized, unregulated in traditional sense).<br>
-                        1:1 fiat-backed = e-money (stable, centralized, FCA-regulated under Electronic Money Regulations 2011).</p>
-
-                        <h4>Implications</h4>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Approach</th>
-                                    <th>Regulatory Path</th>
-                                    <th>User Experience</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Blockchain/Ethereum</strong></td>
-                                    <td>Unclear UK crypto regulation</td>
-                                    <td>Users need ETH for gas fees, value fluctuates</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>1:1 Fiat-backed</strong></td>
-                                    <td>FCA e-money registration OR partner</td>
-                                    <td>Users purchase with £/€/$, stable value</td>
+                                <tr class="highlight">
+                                    <td><strong>Coin Wallet (LATEST)</strong></td>
+                                    <td>"The coin is a <strong>1to1 fiat rate (currency)</strong> which is back by the users at phase 1"</td>
+                                    <td><strong>RD document 27 May 2026 ✅</strong></td>
                                 </tr>
                             </tbody>
                         </table>
+
+                        <h4 class="mt-3">Confirmed Implementation</h4>
+                        <ul>
+                            <li><strong>Architecture:</strong> Internal double-entry ledger (NOT blockchain)</li>
+                            <li><strong>Wallet Type:</strong> Self-custody wallet with 1:1 fiat backing</li>
+                            <li><strong>FCA Compliance:</strong> Partner with licensed provider (Stripe/Mangopay)</li>
+                            <li><strong>Transaction Types:</strong> Top-up, Gift, Purchase, Entry Fee, Winnings, Cash-out, Go Live, Nudge Play</li>
+                            <li><strong>Database Schema:</strong> <code>Wallet</code> + <code>Transaction</code> tables (double-entry)</li>
+                        </ul>
 
                         <div class="alert alert-info mt-3">
-                            <div class="alert-title">Working Assumption</div>
-                            <p>Internal double-entry ledger with 1:1 fiat backing, using third-party licensed payment provider (Stripe/Mangopay) for FCA compliance.</p>
-                            <p><strong>Rationale:</strong> Wallet & Coin UX doc is more recent and describes fiat-like transactions (card top-up, bank cash-out).</p>
+                            <div class="alert-title">📋 Impact on SDD</div>
+                            <p>This resolution validates the entire wallet/transaction data model in the SDD. No blockchain infrastructure required. System Design Document proceeds with PostgreSQL ledger implementation.</p>
                         </div>
 
-                        <p class="mt-3"><strong>Resolution Required:</strong> Confirm with Lincoln + legal advisor before Phase 2.</p>
+                        <p class="mt-3"><strong>See Also:</strong> <a href="srs-updates-summary.html">SRS Updates Summary</a>, <a href="data-model.html">Data Model & ERD</a></p>
                     </div>
                 </div>
             </div>
@@ -304,8 +295,8 @@
                         <td><strong>C01</strong></td>
                         <td>FCA / Wallet Approach</td>
                         <td>Financial/Legal</td>
-                        <td>🔴 BLOCKING</td>
-                        <td><span class="badge badge-blocked">Requires Lincoln + legal</span></td>
+                        <td>✅ RESOLVED</td>
+                        <td><span class="badge badge-completed">1:1 Fiat-backed (27 May 2026)</span></td>
                     </tr>
                     <tr>
                         <td><strong>C02</strong></td>
@@ -353,5 +344,6 @@
     </div>
 
     <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
 </body>
 </html>

@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cost Optimization | KlashOut Phase 1</title>
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                    <li><a href="payment-tiers.html">Payment Plans &amp; Tiers</a></li>
+                    <li><a href="cost-optimization.html" class="active">Cost Optimization</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1>Cost Optimization Strategy</h1>
+            <p class="subtitle">Cost-effective alternatives to AWS and third-party services for 2M user scale</p>
+        </header>
+
+        <div class="container">
+
+
+            <!-- Executive Summary -->
+            <section class="section">
+                <h2>Executive Summary</h2>
+                <p>Based on comprehensive market research (July 2026), we can reduce infrastructure costs by <strong>60-80%</strong> compared to the original AWS-heavy stack while maintaining performance and scalability to 2 million users.</p>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service Category</th>
+                            <th>Original (AWS)</th>
+                            <th>Recommended Alternative</th>
+                            <th>Est. Monthly Savings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>File Storage</strong></td>
+                            <td>AWS S3</td>
+                            <td>Cloudflare R2</td>
+                            <td>~£40-80/month at 100GB + 500GB egress</td>
+                        </tr>
+                        <tr>
+                            <td><strong>CDN</strong></td>
+                            <td>CloudFront</td>
+                            <td>BunnyCDN</td>
+                            <td>~£75-80/month at 1TB delivery</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Database (PostgreSQL)</strong></td>
+                            <td>AWS RDS</td>
+                            <td>DigitalOcean Managed DB</td>
+                            <td>~£230-290/month for production HA setup</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cache (Redis)</strong></td>
+                            <td>AWS ElastiCache</td>
+                            <td>Upstash (pay-per-command)</td>
+                            <td>~£13-17/month at moderate usage</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Payment Processing</strong></td>
+                            <td>Stripe (2.9% + £0.30)</td>
+                            <td>Helcim (interchange-plus)</td>
+                            <td>Variable: ~0.3-0.5% lower fees</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Total Estimated Savings:</strong> £358-467/month minimum, with savings scaling significantly as traffic grows.</p>
+            </section>
+
+            <!-- File Storage -->
+            <section class="section">
+                <h2>1. File Storage: Cloudflare R2 vs AWS S3</h2>
+
+                <h3>The Problem with AWS S3</h3>
+                <p>AWS S3 is industry standard but expensive due to egress (data transfer out) fees. For a music platform streaming audio files and serving images, <strong>egress costs escalate rapidly</strong>.</p>
+
+                <h3>Cost Comparison (100GB stored, 500GB egress/month)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Storage Cost</th>
+                            <th>Egress Cost</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS S3 (Standard)</strong></td>
+                            <td>£2.30/month</td>
+                            <td>£45/month</td>
+                            <td class="highlight-danger">£47.30/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Backblaze B2</strong></td>
+                            <td>£0.60/month</td>
+                            <td>£5/month</td>
+                            <td>£5.60/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cloudflare R2</strong></td>
+                            <td>£1.35/month</td>
+                            <td><span class="badge badge-success">£0 (zero egress)</span></td>
+                            <td class="highlight-success">£1.35/month</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>✅ Recommended: Cloudflare R2</h3>
+                <div class="recommendation">
+                    <h4>Why Cloudflare R2?</h4>
+                    <ul>
+                        <li><strong>Zero egress fees:</strong> The more traffic you serve, the bigger the savings vs S3</li>
+                        <li><strong>Built-in edge delivery:</strong> Integrated CDN functionality</li>
+                        <li><strong>S3-compatible API:</strong> Drop-in replacement with minimal code changes</li>
+                        <li><strong>Scales to millions of users:</strong> Cloudflare's global network handles extreme scale</li>
+                        <li><strong>Storage pricing:</strong> $0.015/GB/month (~£1.35 for 100GB)</li>
+                    </ul>
+
+                    <h4>Cost Projection at Scale</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Users</th>
+                                <th>Est. Storage</th>
+                                <th>Est. Egress</th>
+                                <th>AWS S3 Cost</th>
+                                <th>Cloudflare R2 Cost</th>
+                                <th>Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>10,000</td>
+                                <td>500GB</td>
+                                <td>2TB/month</td>
+                                <td>£191</td>
+                                <td>£6.75</td>
+                                <td>£184/month</td>
+                            </tr>
+                            <tr>
+                                <td>100,000</td>
+                                <td>2TB</td>
+                                <td>10TB/month</td>
+                                <td>£946</td>
+                                <td>£27</td>
+                                <td>£919/month</td>
+                            </tr>
+                            <tr>
+                                <td>2,000,000</td>
+                                <td>20TB</td>
+                                <td>100TB/month</td>
+                                <td>£9,460</td>
+                                <td>£270</td>
+                                <td class="highlight-success">£9,190/month</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>At 2 million users, R2 saves ~£110,000/year vs S3.</strong></p>
+                </div>
+
+                <h3>Implementation Notes</h3>
+                <ul>
+                    <li>R2 uses S3-compatible API — existing AWS SDK code works with minimal changes</li>
+                    <li>Integrate with Cloudflare Workers for edge processing (image resizing, format conversion)</li>
+                    <li>No vendor lock-in: can migrate back to S3 or to Backblaze B2 if needed</li>
+                </ul>
+            </section>
+
+            <!-- CDN -->
+            <section class="section">
+                <h2>2. CDN: BunnyCDN vs CloudFront</h2>
+
+                <h3>Cost Comparison (1TB bandwidth/month)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Bandwidth Cost (Europe/NA)</th>
+                            <th>Total Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS CloudFront</strong></td>
+                            <td>$0.085/GB</td>
+                            <td class="highlight-danger">~£85/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cloudflare (Free Tier)</strong></td>
+                            <td>Unlimited bandwidth</td>
+                            <td>£0/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cloudflare (Pro)</strong></td>
+                            <td>Unlimited bandwidth</td>
+                            <td>£20/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>BunnyCDN</strong></td>
+                            <td>$0.005/GB</td>
+                            <td class="highlight-success">~£5/month (+ £1 minimum)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>✅ Recommended: Cloudflare (if using R2) OR BunnyCDN</h3>
+                <div class="recommendation">
+                    <h4>Option A: Cloudflare (Integrated with R2)</h4>
+                    <ul>
+                        <li><strong>R2 includes CDN functionality:</strong> Files served from R2 are automatically edge-cached</li>
+                        <li><strong>No separate CDN cost:</strong> Egress from R2 to Cloudflare's edge is free</li>
+                        <li><strong>Global edge network:</strong> 275+ data centers worldwide</li>
+                        <li><strong>Best for:</strong> Integrated file storage + delivery solution</li>
+                    </ul>
+
+                    <h4>Option B: BunnyCDN (If NOT using R2)</h4>
+                    <ul>
+                        <li><strong>17x cheaper than CloudFront:</strong> $0.005/GB vs $0.085/GB</li>
+                        <li><strong>Outperforms Cloudflare Free in benchmarks:</strong> Lower latency in NA/Europe/India</li>
+                        <li><strong>£1/month minimum:</strong> Predictable baseline cost</li>
+                        <li><strong>Best for:</strong> Budget-conscious projects with moderate-high traffic</li>
+                    </ul>
+
+                    <h4>Cost Projection at Scale (If using BunnyCDN)</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Monthly Bandwidth</th>
+                                <th>CloudFront Cost</th>
+                                <th>BunnyCDN Cost</th>
+                                <th>Savings</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1TB</td>
+                                <td>£85</td>
+                                <td>£5</td>
+                                <td>£80/month</td>
+                            </tr>
+                            <tr>
+                                <td>10TB</td>
+                                <td>£850</td>
+                                <td>£50</td>
+                                <td>£800/month</td>
+                            </tr>
+                            <tr>
+                                <td>50TB (2M users)</td>
+                                <td>£4,250</td>
+                                <td>£250</td>
+                                <td class="highlight-success">£4,000/month</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Final Recommendation</h3>
+                <p><strong>Use Cloudflare R2 for storage + built-in CDN.</strong> This eliminates the need for a separate CDN service and provides zero-egress file delivery at global scale.</p>
+            </section>
+
+            <!-- Database -->
+            <section class="section">
+                <h2>3. PostgreSQL Database: DigitalOcean vs AWS RDS</h2>
+
+                <h3>Cost Comparison (Production HA Setup: 2 vCPU, 16GB RAM, Multi-AZ)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Configuration</th>
+                            <th>Monthly Cost</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS RDS</strong></td>
+                            <td>db.t3.large Multi-AZ + backups + replicas</td>
+                            <td class="highlight-danger">~£475/month</td>
+                            <td>Multi-AZ, backups, and transfer billed separately</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DigitalOcean Managed DB</strong></td>
+                            <td>2 vCPU, 16GB, HA cluster</td>
+                            <td class="highlight-success">~£244/month</td>
+                            <td>All-inclusive: HA, backups, monitoring</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Neon (Serverless)</strong></td>
+                            <td>Usage-based: $0.106/CU-hour</td>
+                            <td>Variable: £50-200/month</td>
+                            <td>Autoscaling, no monthly minimum (as of 2026)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aiven</strong></td>
+                            <td>1GB RAM, 5GB storage (Startup)</td>
+                            <td>£29/month</td>
+                            <td>Scales up as needed</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>✅ Recommended: DigitalOcean Managed PostgreSQL</h3>
+                <div class="recommendation">
+                    <h4>Why DigitalOcean?</h4>
+                    <ul>
+                        <li><strong>48% cheaper than AWS RDS:</strong> £244/month vs £475/month for same spec</li>
+                        <li><strong>Predictable flat pricing:</strong> HA, backups, monitoring all included</li>
+                        <li><strong>Easy to manage:</strong> Simple UI, no surprise bills</li>
+                        <li><strong>Scales to 2M users:</strong> Can upgrade to 32 vCPU, 192GB RAM when needed</li>
+                        <li><strong>Daily automated backups:</strong> Point-in-time recovery included</li>
+                        <li><strong>Connection pooling built-in:</strong> PgBouncer pre-configured</li>
+                    </ul>
+
+                    <h4>Phase 1 vs Phase 2+ Sizing</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Users</th>
+                                <th>Recommended Config</th>
+                                <th>DigitalOcean Cost</th>
+                                <th>AWS RDS Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Phase 1 (MVP)</strong></td>
+                                <td><10K</td>
+                                <td>1 vCPU, 2GB RAM</td>
+                                <td>£15/month</td>
+                                <td>~£50/month</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phase 2 (Growth)</strong></td>
+                                <td>10K-100K</td>
+                                <td>2 vCPU, 16GB RAM, HA</td>
+                                <td>£244/month</td>
+                                <td>~£475/month</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Phase 3 (Scale)</strong></td>
+                                <td>100K-2M</td>
+                                <td>8 vCPU, 64GB RAM, HA</td>
+                                <td>£720/month</td>
+                                <td>~£1,400/month</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <h3>Alternative: Neon (For Early Stage)</h3>
+                <p>For Phase 1 (<10K users), <strong>Neon serverless PostgreSQL</strong> may be more cost-effective:</p>
+                <ul>
+                    <li><strong>Pay only for actual usage:</strong> $0.106/compute-hour</li>
+                    <li><strong>Autoscales to zero:</strong> No cost when idle</li>
+                    <li><strong>Database branching:</strong> Create instant dev/staging copies</li>
+                    <li><strong>Risk:</strong> Variable costs — can spike unexpectedly if not monitored</li>
+                </ul>
+                <p><strong>Recommendation:</strong> Start with Neon for Phase 1, migrate to DigitalOcean Managed DB at 10K+ users for predictable pricing.</p>
+            </section>
+
+            <!-- Redis -->
+            <section class="section">
+                <h2>4. Redis Cache: Upstash vs AWS ElastiCache</h2>
+
+                <h3>Cost Comparison (1GB workload, 500K commands/day)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Pricing Model</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS ElastiCache</strong></td>
+                            <td>Instance-based (cache.t3.micro)</td>
+                            <td class="highlight-danger">£23.36/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DigitalOcean Managed Redis</strong></td>
+                            <td>Flat rate (1GB plan)</td>
+                            <td>£15.15/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Railway</strong></td>
+                            <td>Usage-based</td>
+                            <td>£10.14/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Upstash</strong></td>
+                            <td>Pay-per-command: $0.20/100K commands</td>
+                            <td class="highlight-success">£30/month at 500K cmds/day<br>£6/month at 100K cmds/day</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>✅ Recommended: Upstash (Serverless Redis)</h3>
+                <div class="recommendation">
+                    <h4>Why Upstash?</h4>
+                    <ul>
+                        <li><strong>Pay only for what you use:</strong> $0.20 per 100K commands + $0.25/GB storage</li>
+                        <li><strong>Generous free tier:</strong> 256MB storage + 500K commands/month</li>
+                        <li><strong>No idle costs:</strong> Perfect for early-stage/variable traffic</li>
+                        <li><strong>Global edge network:</strong> Low-latency reads worldwide</li>
+                        <li><strong>REST API included:</strong> Access from serverless functions without connection pooling</li>
+                    </ul>
+
+                    <h4>Cost Sensitivity to Usage</h4>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Daily Commands</th>
+                                <th>Monthly Commands</th>
+                                <th>Upstash Cost</th>
+                                <th>ElastiCache Cost</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>10K</td>
+                                <td>300K</td>
+                                <td class="highlight-success">£0 (free tier)</td>
+                                <td>£23.36</td>
+                            </tr>
+                            <tr>
+                                <td>100K</td>
+                                <td>3M</td>
+                                <td>£6</td>
+                                <td>£23.36</td>
+                            </tr>
+                            <tr>
+                                <td>500K</td>
+                                <td>15M</td>
+                                <td>£30</td>
+                                <td>£23.36</td>
+                            </tr>
+                            <tr>
+                                <td>1M</td>
+                                <td>30M</td>
+                                <td class="highlight-danger">£60</td>
+                                <td>£23.36</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p><strong>When to switch:</strong> If daily commands exceed 500K consistently, migrate to DigitalOcean Managed Redis (£15/month flat) or Railway (usage-based, cheaper than Upstash at high volume).</p>
+                </div>
+
+                <h3>Usage Strategy</h3>
+                <ul>
+                    <li><strong>Phase 1 (<5K DAU):</strong> Use Upstash free tier</li>
+                    <li><strong>Phase 2 (5K-50K DAU):</strong> Continue with Upstash pay-as-you-go</li>
+                    <li><strong>Phase 3 (50K+ DAU):</strong> Evaluate switching to DigitalOcean Managed Redis for flat pricing</li>
+                </ul>
+            </section>
+
+            <!-- Payment Processing -->
+            <section class="section">
+                <h2>5. Payment Processing: Helcim vs Stripe</h2>
+
+                <h3>Cost Comparison (£100K monthly revenue)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Pricing Model</th>
+                            <th>Effective Rate</th>
+                            <th>Monthly Fees (£100K revenue)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Stripe</strong></td>
+                            <td>2.9% + £0.30/transaction</td>
+                            <td>~3.2%</td>
+                            <td class="highlight-danger">£3,200</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Square</strong></td>
+                            <td>2.9% + £0.30 (online)</td>
+                            <td>~3.2%</td>
+                            <td>£3,200</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Helcim</strong></td>
+                            <td>Interchange-plus with volume discounts</td>
+                            <td>~2.5-2.8%</td>
+                            <td class="highlight-success">£2,500-2,800</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Adyen</strong></td>
+                            <td>Interchange-plus (enterprise)</td>
+                            <td>~2.3-2.6%</td>
+                            <td>£2,300-2,600</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>✅ Recommended: Start with Stripe, Migrate to Helcim at £50K+/month</h3>
+                <div class="recommendation">
+                    <h4>Phase 1: Use Stripe</h4>
+                    <ul>
+                        <li><strong>Fastest integration:</strong> Best-in-class developer experience</li>
+                        <li><strong>Stripe Connect:</strong> Required for marketplace/payout features (Super Klasher revenue, artist payouts)</li>
+                        <li><strong>Comprehensive docs:</strong> Reduce development time</li>
+                        <li><strong>Cost acceptable at low volume:</strong> 2.9% + £0.30 is standard for early-stage</li>
+                    </ul>
+
+                    <h4>Phase 2 (£50K+ monthly): Evaluate Helcim</h4>
+                    <ul>
+                        <li><strong>Automatic volume discounts:</strong> Fees decrease as volume increases</li>
+                        <li><strong>Interchange-plus pricing:</strong> Transparent markup over actual card costs</li>
+                        <li><strong>No monthly fees:</strong> Volume-based pricing only</li>
+                        <li><strong>Best for high-volume:</strong> Savings compound at scale</li>
+                    </ul>
+
+                    <h4>Long-Term (£250K+ monthly): Negotiate with Adyen or Checkout.com</h4>
+                    <ul>
+                        <li><strong>Enterprise-grade:</strong> Custom pricing for high-volume merchants</li>
+                        <li><strong>Lower effective rates:</strong> Can negotiate to ~2.3%</li>
+                        <li><strong>Complex integration:</strong> Requires dedicated dev resources</li>
+                    </ul>
+                </div>
+
+                <h3>Annual Savings Projection (Phase 2+)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Annual Revenue</th>
+                            <th>Stripe Fees (3.2%)</th>
+                            <th>Helcim Fees (2.7%)</th>
+                            <th>Annual Savings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>£500K</td>
+                            <td>£16,000</td>
+                            <td>£13,500</td>
+                            <td>£2,500</td>
+                        </tr>
+                        <tr>
+                            <td>£1M</td>
+                            <td>£32,000</td>
+                            <td>£27,000</td>
+                            <td>£5,000</td>
+                        </tr>
+                        <tr>
+                            <td>£5M</td>
+                            <td>£160,000</td>
+                            <td>£135,000</td>
+                            <td class="highlight-success">£25,000</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- Compute / Hosting -->
+            <section class="section">
+                <h2>6. Application Hosting (Backend + Frontend)</h2>
+
+                <h3>Cost Comparison (2 vCPU, 4GB RAM, 100GB SSD)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Provider</th>
+                            <th>Service</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>AWS EC2</strong></td>
+                            <td>t3.medium (2 vCPU, 4GB)</td>
+                            <td>~£35-40/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>DigitalOcean Droplet</strong></td>
+                            <td>2 vCPU, 4GB, 100GB SSD</td>
+                            <td class="highlight-success">£24/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Hetzner Cloud</strong></td>
+                            <td>CPX21 (3 vCPU, 4GB, 80GB SSD)</td>
+                            <td>£8/month</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Railway</strong></td>
+                            <td>Usage-based (vCPU + RAM hours)</td>
+                            <td>Variable: £15-50/month</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>✅ Recommended: DigitalOcean App Platform or Droplets</h3>
+                <div class="recommendation">
+                    <h4>Why DigitalOcean?</h4>
+                    <ul>
+                        <li><strong>32-40% cheaper than AWS EC2</strong></li>
+                        <li><strong>Predictable flat pricing:</strong> No surprise bandwidth charges</li>
+                        <li><strong>Simple management:</strong> Easy to set up, scale, and monitor</li>
+                        <li><strong>App Platform option:</strong> Managed PaaS (like Heroku) for £15-30/month</li>
+                        <li><strong>All services in one place:</strong> Droplets + PostgreSQL + Redis + Spaces (S3-compatible storage)</li>
+                    </ul>
+
+                    <h4>Scaling Path</h4>
+                    <ul>
+                        <li><strong>Phase 1:</strong> 1x Droplet (£12/month) or App Platform Basic (£15/month)</li>
+                        <li><strong>Phase 2:</strong> 2-3x Droplets + Load Balancer (£60-80/month total)</li>
+                        <li><strong>Phase 3:</strong> Kubernetes cluster on DigitalOcean (£150-300/month for 4-8 nodes)</li>
+                    </ul>
+                </div>
+
+                <h3>Alternative: Hetzner (EU-Based, Cheapest)</h3>
+                <p>If most users are Europe-based, <strong>Hetzner Cloud</strong> offers unbeatable pricing:</p>
+                <ul>
+                    <li><strong>70% cheaper than AWS:</strong> £8/month for 3 vCPU, 4GB RAM</li>
+                    <li><strong>Data centers:</strong> Germany, Finland (GDPR-compliant)</li>
+                    <li><strong>Limitation:</strong> Fewer global regions than DigitalOcean/AWS</li>
+                </ul>
+                <p><strong>Recommendation:</strong> Use Hetzner for Phase 1 if primarily UK/EU users, migrate to DigitalOcean for global scale.</p>
+            </section>
+
+            <!-- Total Cost Projection -->
+            <section class="section">
+                <h2>Total Infrastructure Cost Projection</h2>
+
+                <h3>Phase 1: MVP (<10K users)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Provider</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>File Storage + CDN</td>
+                            <td>Cloudflare R2</td>
+                            <td>£3-5</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL</td>
+                            <td>Neon (serverless)</td>
+                            <td>£10-20</td>
+                        </tr>
+                        <tr>
+                            <td>Redis</td>
+                            <td>Upstash (free tier)</td>
+                            <td>£0</td>
+                        </tr>
+                        <tr>
+                            <td>Backend Hosting</td>
+                            <td>DigitalOcean Droplet</td>
+                            <td>£12-24</td>
+                        </tr>
+                        <tr>
+                            <td>Payment Processing</td>
+                            <td>Stripe</td>
+                            <td>Variable (2.9% + £0.30)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TOTAL</strong></td>
+                            <td></td>
+                            <td class="highlight-success"><strong>£25-49/month</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Phase 2: Growth (10K-100K users)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Provider</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>File Storage + CDN</td>
+                            <td>Cloudflare R2</td>
+                            <td>£20-40</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL</td>
+                            <td>DigitalOcean Managed DB</td>
+                            <td>£244</td>
+                        </tr>
+                        <tr>
+                            <td>Redis</td>
+                            <td>Upstash</td>
+                            <td>£15-30</td>
+                        </tr>
+                        <tr>
+                            <td>Backend Hosting</td>
+                            <td>DigitalOcean (3x Droplets + LB)</td>
+                            <td>£80-100</td>
+                        </tr>
+                        <tr>
+                            <td>Payment Processing</td>
+                            <td>Helcim</td>
+                            <td>Variable (2.7%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TOTAL</strong></td>
+                            <td></td>
+                            <td class="highlight-success"><strong>£359-414/month</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Phase 3: Scale (100K-2M users)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>Provider</th>
+                            <th>Monthly Cost</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>File Storage + CDN</td>
+                            <td>Cloudflare R2</td>
+                            <td>£200-300</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL</td>
+                            <td>DigitalOcean Managed DB (HA, 8 vCPU)</td>
+                            <td>£720</td>
+                        </tr>
+                        <tr>
+                            <td>Redis</td>
+                            <td>DigitalOcean Managed Redis</td>
+                            <td>£60-100</td>
+                        </tr>
+                        <tr>
+                            <td>Backend Hosting</td>
+                            <td>DigitalOcean Kubernetes</td>
+                            <td>£200-300</td>
+                        </tr>
+                        <tr>
+                            <td>Payment Processing</td>
+                            <td>Helcim / Adyen</td>
+                            <td>Variable (2.5%)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TOTAL</strong></td>
+                            <td></td>
+                            <td class="highlight-success"><strong>£1,180-1,420/month</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>AWS Comparison (Phase 3: 2M users)</h3>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Service</th>
+                            <th>AWS Cost</th>
+                            <th>Optimized Cost</th>
+                            <th>Savings</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>File Storage + CDN</td>
+                            <td>£9,460</td>
+                            <td>£270</td>
+                            <td>£9,190</td>
+                        </tr>
+                        <tr>
+                            <td>PostgreSQL</td>
+                            <td>£1,400</td>
+                            <td>£720</td>
+                            <td>£680</td>
+                        </tr>
+                        <tr>
+                            <td>Redis</td>
+                            <td>£150</td>
+                            <td>£100</td>
+                            <td>£50</td>
+                        </tr>
+                        <tr>
+                            <td>Compute (EC2)</td>
+                            <td>£500-700</td>
+                            <td>£300</td>
+                            <td>£200-400</td>
+                        </tr>
+                        <tr>
+                            <td><strong>TOTAL</strong></td>
+                            <td class="highlight-danger"><strong>£11,510-11,710/month</strong></td>
+                            <td class="highlight-success"><strong>£1,390/month</strong></td>
+                            <td class="highlight-success"><strong>£10,120-10,320/month</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p><strong>Annual savings at 2M users: ~£121,000/year</strong></p>
+            </section>
+
+            <!-- Implementation Roadmap -->
+            <section class="section">
+                <h2>Implementation Roadmap</h2>
+
+                <h3>Immediate (Phase 1 Launch)</h3>
+                <ol>
+                    <li><strong>File Storage:</strong> Set up Cloudflare R2 instead of AWS S3</li>
+                    <li><strong>Database:</strong> Use Neon serverless PostgreSQL (free tier → pay-as-you-go)</li>
+                    <li><strong>Cache:</strong> Use Upstash Redis (free tier covers <5K DAU)</li>
+                    <li><strong>Hosting:</strong> Deploy backend on DigitalOcean Droplet (£12-24/month)</li>
+                    <li><strong>Payment:</strong> Integrate Stripe for fastest MVP launch</li>
+                </ol>
+
+                <h3>Phase 2 (10K-100K users)</h3>
+                <ol>
+                    <li><strong>Database:</strong> Migrate from Neon to DigitalOcean Managed PostgreSQL for predictable pricing</li>
+                    <li><strong>Cache:</strong> Continue Upstash or migrate to DigitalOcean Managed Redis if commands exceed 500K/day</li>
+                    <li><strong>Hosting:</strong> Scale to 2-3 Droplets behind DigitalOcean Load Balancer</li>
+                    <li><strong>Payment:</strong> Evaluate Helcim if processing >£50K/month</li>
+                </ol>
+
+                <h3>Phase 3 (100K-2M users)</h3>
+                <ol>
+                    <li><strong>Database:</strong> Upgrade to 8 vCPU, 64GB HA cluster (£720/month)</li>
+                    <li><strong>Cache:</strong> Use DigitalOcean Managed Redis with read replicas</li>
+                    <li><strong>Hosting:</strong> Migrate to DigitalOcean Kubernetes for auto-scaling</li>
+                    <li><strong>Payment:</strong> Negotiate enterprise pricing with Adyen or Checkout.com</li>
+                </ol>
+            </section>
+
+            <!-- Risk Assessment -->
+            <section class="section">
+                <h2>Risk Assessment</h2>
+
+                <h3>Cloudflare R2 Risks</h3>
+                <ul>
+                    <li><strong>Relatively new:</strong> R2 launched in 2022, less mature than S3</li>
+                    <li><strong>Mitigation:</strong> Cloudflare is a reliable $4B+ company; R2 uses standard S3 API (easy to migrate back if needed)</li>
+                </ul>
+
+                <h3>Vendor Lock-In</h3>
+                <ul>
+                    <li><strong>Risk:</strong> Moving between providers requires migration effort</li>
+                    <li><strong>Mitigation:</strong> All recommended services use standard protocols (S3 API, PostgreSQL, Redis) — no proprietary lock-in</li>
+                </ul>
+
+                <h3>Support Quality</h3>
+                <ul>
+                    <li><strong>Risk:</strong> Smaller providers may have slower support response times vs AWS</li>
+                    <li><strong>Mitigation:</strong> DigitalOcean and Cloudflare have strong community support; paid support plans available</li>
+                </ul>
+
+                <h3>Geographic Availability</h3>
+                <ul>
+                    <li><strong>Risk:</strong> Fewer data center regions than AWS</li>
+                    <li><strong>Mitigation:</strong> Cloudflare has 275+ edge locations worldwide; DigitalOcean has 15 regions covering all major markets</li>
+                </ul>
+            </section>
+
+            <!-- Questions for Lincoln -->
+            <section class="section">
+                <h2>Questions for Lincoln</h2>
+
+                <ol>
+                    <li><strong>Q: Risk tolerance for newer providers?</strong> Are you comfortable using Cloudflare R2 (launched 2022) over AWS S3 for significant cost savings?</li>
+                    <li><strong>Q: Geographic priority?</strong> Which regions are most important? (UK/EU, North America, Global)</li>
+                    <li><strong>Q: Budget ceiling for Phase 1 infrastructure?</strong> What's the maximum acceptable monthly infrastructure cost for MVP?</li>
+                    <li><strong>Q: Preference for simplicity vs cost?</strong> Would you prefer one provider (DigitalOcean for everything) or best-of-breed (Cloudflare + DigitalOcean + Upstash + Stripe)?</li>
+                </ol>
+            </section>
+
+            <footer class="footer">
+                <p>KlashOut Phase 1 Discovery • Last Updated: 20 July 2026</p>
+            </footer>
+        </div>
+    </div>
+
+    <style>
+        .highlight-success {
+            background-color: #d4edda;
+            color: #155724;
+            font-weight: bold;
+            padding: 4px 8px;
+        }
+        .highlight-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            font-weight: bold;
+            padding: 4px 8px;
+        }
+        .recommendation {
+            background: #1d2031;
+            border-left: 4px solid #00d4ff;
+            padding: var(--spacing-lg);
+            margin: var(--spacing-lg) 0;
+        }
+        .badge-tier-klasher {
+            background: #0066cc;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .badge-tier-independent {
+            background: #9933ff;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .badge-tier-super {
+            background: #6600cc;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .badge-tier-mixed {
+            background: linear-gradient(90deg, #9933ff 50%, #6600cc 50%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+    </style>
+
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
+</body>
+</html>

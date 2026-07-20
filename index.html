@@ -31,6 +31,8 @@
                     <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
                     <li><a href="data-model.html">Data Model &amp; ERD</a></li>
                     <li><a href="reference.html">Reference Tables</a></li>
+                    <li><a href="payment-tiers.html">Payment Plans &amp; Tiers</a></li>
+                    <li><a href="cost-optimization.html">Cost Optimization</a></li>
                 </ul>
             </div>
             <div class="nav-section">
@@ -126,7 +128,7 @@
                                 <td><strong>C01</strong></td>
                                 <td>FCA / Wallet Approach: Blockchain vs Fiat-Backed</td>
                                 <td>Regulatory compliance, wallet architecture</td>
-                                <td><span class="badge badge-blocked">BLOCKING</span></td>
+                                <td><span class="badge badge-completed">RESOLVED (1:1 Fiat-backed)</span></td>
                             </tr>
                             <tr>
                                 <td><strong>C02</strong></td>
@@ -136,15 +138,15 @@
                             </tr>
                             <tr>
                                 <td><strong>C03</strong></td>
-                                <td>Web-First Sequencing</td>
-                                <td>API-first architecture mandate</td>
-                                <td><span class="badge badge-completed">RESOLVED</span></td>
+                                <td>Mobile + Web Simultaneously (was: Web-First)</td>
+                                <td>Development timeline, resource allocation</td>
+                                <td><span class="badge badge-completed">UPDATED (Both Platforms)</span></td>
                             </tr>
                             <tr>
                                 <td><strong>C04</strong></td>
-                                <td>Concurrency Ceiling: "Unlimited" not buildable</td>
-                                <td>WebSocket scaling, infrastructure</td>
-                                <td><span class="badge badge-blocked">BLOCKING</span></td>
+                                <td>Concurrency Ceiling: Must scale to 2M users</td>
+                                <td>WebSocket scaling, infrastructure cost</td>
+                                <td><span class="badge badge-should-have">UPDATED (Target: 2M)</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -162,7 +164,7 @@
                     <h3>Design Approach</h3>
                     <p><strong>API-First, Client-Agnostic Backend</strong> — Mandated by web-first sequencing. All business logic resides server-side; web and future mobile clients are thin presentation layers consuming the same API.</p>
 
-                    <h3>Technology Stack (Proposed)</h3>
+                    <h3>Technology Stack (Cost-Optimized)</h3>
                     <table>
                         <thead>
                             <tr>
@@ -179,8 +181,8 @@
                             </tr>
                             <tr>
                                 <td>Database</td>
-                                <td>PostgreSQL</td>
-                                <td>ACID-compliant for financial transactions</td>
+                                <td>DigitalOcean Managed PostgreSQL</td>
+                                <td>ACID-compliant, 48% cheaper than AWS RDS</td>
                             </tr>
                             <tr>
                                 <td>Real-Time</td>
@@ -189,21 +191,37 @@
                             </tr>
                             <tr>
                                 <td>Cache</td>
-                                <td>Redis</td>
-                                <td>Leaderboards, active game state</td>
+                                <td>Upstash Redis (serverless)</td>
+                                <td>Pay-per-command, free tier covers early stage</td>
+                            </tr>
+                            <tr>
+                                <td>File Storage + CDN</td>
+                                <td>Cloudflare R2</td>
+                                <td>Zero egress fees, 97% cheaper than S3 at scale</td>
                             </tr>
                             <tr>
                                 <td>Frontend (Web)</td>
                                 <td>React + TypeScript</td>
-                                <td>Industry standard, type safety</td>
+                                <td>React Native code sharing for mobile</td>
+                            </tr>
+                            <tr>
+                                <td>Frontend (Mobile)</td>
+                                <td>React Native</td>
+                                <td>iOS + Android from single codebase</td>
                             </tr>
                             <tr>
                                 <td>Payment</td>
-                                <td>Stripe Connect</td>
-                                <td>FCA-licensed e-money provider</td>
+                                <td>Stripe → Helcim (at £50K+/mo)</td>
+                                <td>FCA-licensed, lower fees at scale</td>
+                            </tr>
+                            <tr>
+                                <td>Hosting</td>
+                                <td>DigitalOcean Droplets/App Platform</td>
+                                <td>40% cheaper than AWS EC2, predictable pricing</td>
                             </tr>
                         </tbody>
                     </table>
+                    <p class="mt-2"><small><strong>Estimated savings:</strong> 60-80% vs AWS-heavy stack. See <a href="cost-optimization.html">Cost Optimization</a> for full analysis.</small></p>
 
                     <h3 class="mt-3">Key Design Decisions</h3>
                     <ul>
@@ -340,5 +358,6 @@
     </div>
 
     <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
 </body>
 </html>

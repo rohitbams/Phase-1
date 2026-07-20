@@ -31,6 +31,8 @@
                     <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
                     <li><a href="data-model.html">Data Model &amp; ERD</a></li>
                     <li><a href="reference.html">Reference Tables</a></li>
+                    <li><a href="payment-tiers.html">Payment Plans &amp; Tiers</a></li>
+                    <li><a href="cost-optimization.html">Cost Optimization</a></li>
                 </ul>
             </div>
             <div class="nav-section">
@@ -82,48 +84,31 @@
                 <div class="card-body">
                     <p class="alert alert-critical">These questions have <strong>legal and financial stakes</strong>. Legal advisor presence recommended.</p>
 
-                    <h3>Q1.1 — Klash Coin Wallet: Fiat vs Blockchain</h3>
-                    <p><strong>Source:</strong> BRD (3 Jan 2026, Page 5) + Wallet & Coin UX doc (Line 7)</p>
-                    <p><strong>Background:</strong> Direct contradiction found in source documents:</p>
+                    <h3>Q1.1 — Klash Coin Wallet: Fiat vs Blockchain <span class="badge badge-completed">✅ RESOLVED</span></h3>
+                    <p><strong>Resolution Date:</strong> 27 May 2026<br>
+                    <strong>Source:</strong> RD document for Rohit Coin Wallet 27_5_2026.doc.pdf</p>
+
+                    <div class="alert alert-info">
+                        <div class="alert-title">✅ Confirmed Decision</div>
+                        <p><strong>1:1 fiat-backed wallet</strong> (NOT blockchain)<br>
+                        "The coin is a 1to1 fiat rate (currency) which is back by the users at phase 1"</p>
+                    </div>
+
+                    <p><strong>Original Contradiction (Now Resolved):</strong></p>
                     <ul>
-                        <li><strong>BRD (3 Jan 2026, Page 5):</strong> <em>"The coin should be based around Ethereum system. KO will create its own blockchain."</em></li>
-                        <li><strong>Wallet & Coin UX doc:</strong> <em>"The coin is a 1 to 1 fiat rate (currency) which is backed by the users."</em></li>
+                        <li><strong>BRD (3 Jan 2026, Page 5):</strong> <em>"The coin should be based around Ethereum system. KO will create its own blockchain."</em> → <strong>SUPERSEDED</strong></li>
+                        <li><strong>Coin Wallet doc (27 May 2026):</strong> <em>"The coin is a 1to1 fiat rate (currency) which is back by the users at phase 1"</em> → <strong>CONFIRMED ✅</strong></li>
                     </ul>
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Approach</th>
-                                <th>Technology</th>
-                                <th>Regulatory</th>
-                                <th>Risk</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><strong>Blockchain/Ethereum</strong></td>
-                                <td>Smart contracts, self-custody, gas fees</td>
-                                <td>Unclear UK crypto regulation</td>
-                                <td>High regulatory uncertainty</td>
-                            </tr>
-                            <tr>
-                                <td><strong>1:1 Fiat-backed</strong></td>
-                                <td>Internal ledger, custodial wallet</td>
-                                <td>FCA e-money regulations</td>
-                                <td>Clear compliance path</td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <p class="mt-3"><strong>Implementation Confirmed:</strong></p>
+                    <ul>
+                        <li>✅ Internal double-entry ledger (PostgreSQL)</li>
+                        <li>✅ Partner with licensed payment provider (Stripe/Mangopay) for FCA compliance</li>
+                        <li>✅ Self-custody wallet with fiat backing</li>
+                        <li>✅ Transaction types: Top-up, Gift, Purchase, Entry Fee, Winnings, Cash-out, Go Live, Nudge Play</li>
+                    </ul>
 
-                    <p class="mt-3"><strong>Questions:</strong></p>
-                    <ol>
-                        <li>Which approach is correct? (Blockchain / Fiat-backed / Hybrid)</li>
-                        <li>If fiat-backed: Has KO taken legal advice on FCA e-money regulations?</li>
-                        <li>FCA compliance path: KO registers as e-money institution OR partner with licensed provider (Stripe/Mangopay)?</li>
-                        <li>Should blockchain/Ethereum reference be discarded entirely?</li>
-                    </ol>
-
-                    <p class="mt-3"><strong>Recommendation:</strong> Partner with licensed payment provider (Stripe Connect or Mangopay) for FCA compliance. Faster to market than applying for e-money institution status.</p>
+                    <p class="mt-3"><strong>See:</strong> <a href="conflicts.html">Conflict Register C01</a>, <a href="srs-updates-summary.html">SRS Updates</a>, <a href="data-model.html">Data Model</a></p>
 
                     <hr class="mt-3">
 
@@ -451,5 +436,6 @@
     </div>
 
     <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
 </body>
 </html>

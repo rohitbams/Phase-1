@@ -31,6 +31,8 @@
                     <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
                     <li><a href="data-model.html" class="active">Data Model & ERD</a></li>
                     <li><a href="reference.html">Reference Tables</a></li>
+                    <li><a href="payment-tiers.html">Payment Plans &amp; Tiers</a></li>
+                    <li><a href="cost-optimization.html">Cost Optimization</a></li>
                 </ul>
             </div>
             <div class="nav-section">
@@ -344,8 +346,16 @@
                 <div class="card-body">
                     <h3>Core Entities</h3>
 
-                    <h4 class="mt-3">users</h4>
-                    <pre><code>CREATE TABLE users (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>users</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   email VARCHAR(255) UNIQUE NOT NULL,
   password_hash VARCHAR(255) NOT NULL,
@@ -377,9 +387,20 @@
   INDEX idx_users_klasher_name (klasher_name),
   INDEX idx_users_tier (tier)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">genres</h4>
-                    <pre><code>CREATE TABLE genres (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>genres</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE genres (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(100) UNIQUE NOT NULL,
   slug VARCHAR(100) UNIQUE NOT NULL,
@@ -391,9 +412,20 @@
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW()
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">tracks</h4>
-                    <pre><code>CREATE TABLE tracks (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>tracks</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE tracks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   title VARCHAR(255) NOT NULL,
   artist_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -424,9 +456,20 @@
   INDEX idx_tracks_genre (genre_id),
   INDEX idx_tracks_created (created_at DESC)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">playlists</h4>
-                    <pre><code>CREATE TABLE playlists (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>playlists</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE playlists (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
   name VARCHAR(255) NOT NULL,
@@ -443,9 +486,20 @@
 
   INDEX idx_playlists_user (user_id)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">playlist_tracks</h4>
-                    <pre><code>CREATE TABLE playlist_tracks (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>playlist_tracks</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE playlist_tracks (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   playlist_id UUID REFERENCES playlists(id) ON DELETE CASCADE,
   track_id UUID REFERENCES tracks(id) ON DELETE CASCADE,
@@ -458,9 +512,20 @@
   UNIQUE(playlist_id, track_id),
   INDEX idx_playlist_tracks_playlist (playlist_id, position)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">klashes</h4>
-                    <pre><code>CREATE TABLE klashes (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>klashes</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE klashes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   genre_id UUID REFERENCES genres(id) NOT NULL,
 
@@ -498,9 +563,20 @@
   INDEX idx_klashes_state (state),
   INDEX idx_klashes_created (created_at DESC)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">klash_participations</h4>
-                    <pre><code>CREATE TABLE klash_participations (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>klash_participations</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE klash_participations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -527,9 +603,20 @@
   INDEX idx_participation_klash (klash_id),
   INDEX idx_participation_user (user_id)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">votes</h4>
-                    <pre><code>CREATE TABLE votes (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>votes</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE votes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
   user_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -543,9 +630,20 @@
   UNIQUE(klash_id, user_id),
   INDEX idx_votes_klash (klash_id)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">tournaments</h4>
-                    <pre><code>CREATE TABLE tournaments (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>tournaments</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE tournaments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name VARCHAR(255) NOT NULL,
   genre_id UUID REFERENCES genres(id),
@@ -571,9 +669,20 @@
   INDEX idx_tournaments_genre (genre_id),
   INDEX idx_tournaments_status (status)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">follows</h4>
-                    <pre><code>CREATE TABLE follows (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>follows</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE follows (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   follower_id UUID REFERENCES users(id) ON DELETE CASCADE,
   following_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -587,9 +696,20 @@
   -- Prevent self-follow
   CONSTRAINT no_self_follow CHECK (follower_id != following_id)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">messages</h4>
-                    <pre><code>CREATE TABLE messages (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>messages</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
   recipient_id UUID REFERENCES users(id) ON DELETE CASCADE,
@@ -605,11 +725,22 @@
   INDEX idx_messages_recipient (recipient_id, sent_at DESC),
   INDEX idx_messages_sender (sender_id)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
                     <h3 class="mt-3">Economy Entities</h3>
 
-                    <h4 class="mt-3">wallets</h4>
-                    <pre><code>CREATE TABLE wallets (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>wallets</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE wallets (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Polymorphic: belongs to User OR Klash
@@ -635,9 +766,20 @@
   INDEX idx_wallets_user (user_id),
   INDEX idx_wallets_klash (klash_id)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h4 class="mt-3">transactions</h4>
-                    <pre><code>CREATE TABLE transactions (
+                    <div class="collapsible">
+                        <div class="collapsible-header">
+                            <div class="collapsible-title">
+                                <span class="collapsible-icon">▶</span>
+                                <span><strong>transactions</strong> table schema</span>
+                            </div>
+                        </div>
+                        <div class="collapsible-content">
+                            <div class="collapsible-body">
+                                <pre><code>CREATE TABLE transactions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- Transaction type (discriminator)
@@ -677,6 +819,9 @@
   INDEX idx_transactions_type (type),
   INDEX idx_transactions_status (status)
 );</code></pre>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -763,17 +908,10 @@
                     <hr class="mt-3">
 
                     <h3 class="mt-3">3. Wallet Technology (Blockchain vs Fiat)</h3>
-                    <p><span class="badge badge-blocked">C01 BLOCKING</span></p>
-                    <p><strong>Issue:</strong> BRD says Ethereum/blockchain. Wallet UX doc says 1:1 fiat-backed.</p>
-                    <p><strong>Schema Impact:</strong> If blockchain confirmed, replace Wallet/Transaction tables with:
-                        <ul>
-                            <li><code>blockchain_addresses</code> (user_id, wallet_address, private_key_encrypted)</li>
-                            <li><code>smart_contract_events</code> (transaction_hash, event_type, ...)</li>
-                            <li>No balance stored (queried from blockchain)</li>
-                        </ul>
-                    </p>
-                    <p><strong>Current Schema:</strong> Based on fiat-backed assumption (internal ledger, Stripe integration).</p>
-                    <p><strong>See:</strong> <a href="conflicts.html">C01</a>, <a href="questions-for-lincoln.html">Q1.1</a></p>
+                    <p><span class="badge badge-completed">C01 RESOLVED</span></p>
+                    <p><strong>Resolution:</strong> Confirmed via Coin Wallet document (27 May 2026) — wallet is <strong>1:1 fiat-backed</strong>, not blockchain.</p>
+                    <p><strong>Schema:</strong> Double-entry ledger with internal <code>Wallet</code> and <code>Transaction</code> tables (as designed). Stripe integration for FCA compliance.</p>
+                    <p><strong>See:</strong> <a href="conflicts.html">C01</a>, <a href="srs-updates-summary.html">SRS Updates</a></p>
 
                     <hr class="mt-3">
 
@@ -1023,5 +1161,6 @@ class WalletService {
     </div>
 
     <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
 </body>
 </html>

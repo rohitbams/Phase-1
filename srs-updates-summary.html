@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SRS Updates Summary | KlashOut Phase 1</title>
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>KlashOut</h2>
+                <p>Phase 1 Discovery</p>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="index.html">Overview</a>
+                <a href="conflicts.html">Conflict Register</a>
+                <a href="questions-for-lincoln.html">Questions for Lincoln</a>
+                <a href="design-decisions.html">Design Decisions</a>
+                <a href="system-design.html">System Design (SDD)</a>
+                <a href="epic-hierarchy.html">Epic Hierarchy</a>
+                <a href="data-model.html">Data Model & ERD</a>
+                <a href="reference.html">Reference Tables</a>
+                <a href="payment-tiers.html">Payment Plans & Tiers</a>
+                <a href="cost-optimization.html">Cost Optimization</a>
+                <a href="srs-updates-summary.html" class="active">SRS Updates Summary</a>
+            </nav>
+        </aside>
+
+        <main class="content">
+            <header class="header">
+                <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+                <h1>SRS Updates Summary</h1>
+                <p class="subtitle">Changes based on Lincoln meeting (July 2026) and newly discovered source documents</p>
+            </header>
+
+            <div class="alert alert-info">
+                <strong>📝 Purpose:</strong> This document summarizes all updates that need to be incorporated into the KO_Requirements_Document.md based on:
+                <ul>
+                    <li>Lincoln meeting outcomes (July 2026)</li>
+                    <li>RD document for Rohit Coin Wallet (27 May 2026)</li>
+                    <li>RD document Rohit Klashing_Music (27 May 2026)</li>
+                    <li>KO Requirements - User Stories.csv</li>
+                </ul>
+            </div>
+
+            <!-- Critical Conflict Resolutions -->
+            <section class="section">
+                <h2>1. Critical Conflict Resolutions</h2>
+
+                <div class="subsection">
+                    <h3>✅ C01: FCA / Wallet Approach — RESOLVED</h3>
+                    <p><strong>Previous Status:</strong> <span class="badge badge-blocked">BLOCKING</span> — Direct contradiction between BRD (blockchain/Ethereum) and Wallet & Coin UX doc (1:1 fiat-backed)</p>
+                    <p><strong>Resolution Source:</strong> RD document for Rohit Coin Wallet (27 May 2026, Page 1)</p>
+                    <blockquote>
+                        "The coin is a 1to1 fiat rate (currency) which is back by the users at phase 1"
+                    </blockquote>
+                    <p><strong>Status:</strong> <span class="badge badge-completed">RESOLVED — 1:1 Fiat-Backed</span></p>
+
+                    <h4>Required SRS Updates:</h4>
+                    <ul>
+                        <li><strong>Section D02 (FCA E-Money Regulations):</strong> Update to confirm 1:1 fiat-backed model, remove blockchain references</li>
+                        <li><strong>Epic 8 Introduction:</strong> Update architectural note to state "1:1 fiat-backed digital currency" (not blockchain)</li>
+                        <li><strong>Working Assumption:</strong> Remove "working assumption" language — this is now confirmed</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>🔄 C03: Web-First Sequencing — UPDATED</h3>
+                    <p><strong>Previous Resolution:</strong> Web built first, app developer hired later (from meeting minutes 5 March 2026)</p>
+                    <p><strong>New Information from Lincoln Meeting (July 2026):</strong> <strong>Both mobile app AND web app</strong> required</p>
+                    <p><strong>Status:</strong> <span class="badge badge-should-have">UPDATED</span> — Simultaneous mobile + web deployment</p>
+
+                    <h4>Required SRS Updates:</h4>
+                    <ul>
+                        <li><strong>Introduction:</strong> Update platform description to include both web and mobile from launch</li>
+                        <li><strong>Non-Functional Requirement NF07:</strong> Add cross-platform consistency requirement</li>
+                        <li><strong>Epic 1-12:</strong> User stories should reference "app/platform" instead of "web"</li>
+                    </ul>
+                </div>
+
+                <div class="subsection">
+                    <h3>🔄 C04: Concurrency Ceiling — UPDATED</h3>
+                    <p><strong>Previous Assumption:</strong> ~10,000 concurrent users (working assumption)</p>
+                    <p><strong>New Information from Lincoln Meeting (July 2026):</strong></p>
+                    <ul>
+                        <li><strong>Phase 1 Target:</strong> "Comfortable limit" (interpreted as 10K-50K concurrent users)</li>
+                        <li><strong>Long-Term Target:</strong> Must scale to <strong>2 million users</strong> eventually</li>
+                    </ul>
+                    <p><strong>Status:</strong> <span class="badge badge-should-have">UPDATED</span> — 2M user scalability target</p>
+
+                    <h4>Required SRS Updates:</h4>
+                    <ul>
+                        <li><strong>NF03 (Scalability):</strong> Update from "10,000 concurrent users minimum" to "Phase 1: 10K-50K concurrent; Long-term: Scale to 2M total users"</li>
+                        <li><strong>Epic 3 (Klashing):</strong> Remove "unlimited" language for Super Klasher events; specify realistic ceiling with scaling plan</li>
+                        <li><strong>Open Items:</strong> Add Q: "What is the acceptable latency degradation path as we scale from 10K → 100K → 1M → 2M users?"</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Epic 8: Wallet & Coin Updates -->
+            <section class="section">
+                <h2>2. Epic 8: Klash Coin & Wallet — Major Updates</h2>
+                <p><strong>Source:</strong> RD document for Rohit Coin Wallet (27 May 2026)</p>
+
+                <h3>All Transaction Types Confirmed</h3>
+                <p>The Coin Wallet document provides the complete list of wallet transaction types. Update Epic 8 to include:</p>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Transaction Type</th>
+                            <th>Description</th>
+                            <th>Wallet Flow</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Top-Up</strong></td>
+                            <td>User adds funds via credit/debit card</td>
+                            <td>Payment Processor → User Wallet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gifting</strong></td>
+                            <td>During klash, passively listening, or liking profiles</td>
+                            <td>User A Wallet → User B Wallet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Music Purchasing</strong></td>
+                            <td>Automatic debit/credit within system</td>
+                            <td>Buyer Wallet → Artist Wallet</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Go Live</strong></td>
+                            <td>Can be purchased during or prior to klash (10 sec into klash, not last 10 sec)</td>
+                            <td>User Wallet → Platform/Host</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Go Live Showcase</strong></td>
+                            <td>Independent Klasher pays from wallet before performance</td>
+                            <td>Artist Wallet → Platform</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Super Klash Entry Fee</strong></td>
+                            <td>Deposited into pot → distributed to 1st/2nd/3rd + host fee</td>
+                            <td>Participant Wallet → Klash Escrow Wallet → Winner Wallets</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Nudge Play</strong></td>
+                            <td>Same wallet transaction as Go Live (60 or 90 second klashes only)</td>
+                            <td>User Wallet → Platform</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cash-Out</strong></td>
+                            <td>Transfer from wallet to local currency</td>
+                            <td>User Wallet → Payment Processor → Bank Account</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>Super Klash Pot Distribution (NEW)</h3>
+                <p><strong>Source Quote:</strong> "The SK takes a percentage of the hosting fee and a percentage of the winnings"</p>
+                <ul>
+                    <li>Entry fees collected from all participants</li>
+                    <li>Pot distributed to: 1st place, 2nd place, 3rd place, host fee</li>
+                    <li>Platform (SK/KO) takes percentage of BOTH hosting fee AND winnings</li>
+                    <li><strong>Open Item:</strong> Exact percentages undefined (add to Questions for Lincoln)</li>
+                </ul>
+
+                <h3>Self-Custody Wallet Confirmed</h3>
+                <p><strong>Source Quote:</strong> "Self-custody wallet" — Users manage their own digital assets</p>
+                <p>This confirms the wallet design as user-controlled, not platform-custodial.</p>
+
+                <h3>Required User Stories to Add/Update</h3>
+                <ol>
+                    <li><strong>F48: Top-Up Wallet</strong> — As a user, I want to add funds to my wallet via credit/debit card so that I can participate in paid features</li>
+                    <li><strong>F49: Gift Coins During Klash</strong> — As a spectator, I want to gift coins to a klasher during a live klash so that I can support my favorite competitor</li>
+                    <li><strong>F50: Purchase Music</strong> — As a user, I want to purchase music from Independent Klashers so that I can support artists and add tracks to my library</li>
+                    <li><strong>F51: Cash-Out</strong> — As a user, I want to transfer my Klash Coin balance to local currency so that I can withdraw my earnings</li>
+                    <li><strong>F52: Super Klash Pot Distribution</strong> — Update existing story with confirmed distribution logic (1st/2nd/3rd + host fee + platform cut)</li>
+                </ol>
+            </section>
+
+            <!-- Epic 4: Tournament Formats -->
+            <section class="section">
+                <h2>3. Epic 4: Tournament Formats — Add Details</h2>
+                <p><strong>Source:</strong> RD document Rohit Klashing_Music (27 May 2026, Page 3)</p>
+
+                <p>The document provides specific tournament format descriptions. Update Epic 4 with:</p>
+
+                <h3>Tournament Format Definitions</h3>
+
+                <div class="subsection">
+                    <h4>Round-Robin</h4>
+                    <p><strong>Description:</strong> Every klasher plays every other at least once</p>
+                    <p><strong>Winner Determination:</strong> Player with most wins overall</p>
+                    <p><strong>Use Case:</strong> Small groups (8-16 players), ensures everyone gets equal play time</p>
+                </div>
+
+                <div class="subsection">
+                    <h4>Swiss System</h4>
+                    <p><strong>Description:</strong> Winners play winners, losers play losers</p>
+                    <p><strong>Pairing Logic:</strong> After each round, players with similar records are paired</p>
+                    <p><strong>Use Case:</strong> Medium-to-large tournaments (16-64 players), balances fairness with efficiency</p>
+                </div>
+
+                <div class="subsection">
+                    <h4>Single/Double Elimination</h4>
+                    <p><strong>Single Elimination:</strong> Immediate elimination after one loss</p>
+                    <p><strong>Double Elimination:</strong> Requires two losses to be eliminated (includes loser's bracket)</p>
+                    <p><strong>Use Case:</strong> Fast-paced, high-stakes tournaments</p>
+                </div>
+
+                <div class="subsection">
+                    <h4>Free-For-All (FFA)</h4>
+                    <p><strong>Description:</strong> Every player is an enemy, no teams</p>
+                    <p><strong>Special Rule:</strong> Can use up to 3 nudge plays in FFA mode</p>
+                    <p><strong>Use Case:</strong> Chaotic, high-energy events with multiple simultaneous competitors</p>
+                </div>
+            </section>
+
+            <!-- Epic 10: Nudge Play -->
+            <section class="section">
+                <h2>4. Epic 10: Nudge Play — Add Mechanics</h2>
+                <p><strong>Source:</strong> RD document Rohit Klashing_Music (27 May 2026, Page 4)</p>
+
+                <h3>Nudge Play Rules (PARTIAL ANSWER to Q2.2)</h3>
+                <ul>
+                    <li><strong>Mechanic:</strong> "Nudge klasher out" — interrupt an ongoing klash to replace a participant</li>
+                    <li><strong>Duration Restriction:</strong> Only available in <strong>60 or 90 second klashes</strong> (NOT 30 second)</li>
+                    <li><strong>Timing Window:</strong> Can only be used halfway through the game (e.g., after 30 seconds in a 60-second klash)</li>
+                    <li><strong>Timing Constraint:</strong> Same as Go Live — can be used 10 seconds into klash but NOT in the last 10 seconds</li>
+                    <li><strong>FFA Mode:</strong> Can use up to 3 nudge plays in Free-For-All tournaments</li>
+                    <li><strong>Wallet Transaction:</strong> Costs Klash Coins (amount TBD with Lincoln)</li>
+                    <li><strong>Visual Feedback:</strong> When nudged, user's profile picture, username, and track info appear to opponent(s) and spectators</li>
+                </ul>
+
+                <h3>Updated User Story</h3>
+                <p><strong>F53 (Updated): Nudge Into Klash</strong></p>
+                <blockquote>
+                    As a Klasher, I want to interrupt an ongoing 60 or 90-second klash by nudging out a current participant so that I can take their place and compete for the win.
+                </blockquote>
+
+                <p><strong>Acceptance Criteria:</strong></p>
+                <pre><code>Given a klash is in progress (60 or 90 seconds)
+And the klash is at the halfway point
+And I have sufficient Klash Coins
+When I select "Nudge Play" and choose a participant to replace
+Then the selected participant is removed from the klash
+And I take their position
+And my profile, username, and track are displayed to all participants/spectators
+And the Nudge Play cost is debited from my wallet</code></pre>
+            </section>
+
+            <!-- Epic 11: Forums -->
+            <section class="section">
+                <h2>5. Epic 11: Forums & Discovery — Add Features</h2>
+                <p><strong>Source:</strong> RD document Rohit Klashing_Music (27 May 2026, Page 4)</p>
+
+                <h3>Forum Types</h3>
+                <ul>
+                    <li><strong>Join Random:</strong> Matchmaking into any available forum</li>
+                    <li><strong>All Live:</strong> Browse all currently active forums</li>
+                    <li><strong>Per Genre:</strong> Forums organized by music genre</li>
+                    <li><strong>BK Forum:</strong> (Undefined term — add to Questions for Lincoln)</li>
+                </ul>
+
+                <h3>Forum Mechanics</h3>
+                <ul>
+                    <li><strong>24-Hour Deadline:</strong> Forums have a 24-hour time limit for completion</li>
+                    <li><strong>Put on Hold/Resume:</strong> Forums can be paused and resumed (mechanism TBD)</li>
+                </ul>
+
+                <h3>Required User Stories to Add</h3>
+                <ol>
+                    <li><strong>F54: Join Random Forum</strong> — As a user, I want to join a random active forum so that I can discover new music and klashers</li>
+                    <li><strong>F55: Browse Live Forums</strong> — As a user, I want to browse all live forums by genre so that I can choose which community to join</li>
+                    <li><strong>F56: Put Forum on Hold</strong> — As a forum host, I want to pause the forum so that participants can take a break without ending the session</li>
+                </ol>
+            </section>
+
+            <!-- Epic 12: Music Social -->
+            <section class="section">
+                <h2>6. Epic 12: Music Social — Add Features</h2>
+                <p><strong>Source:</strong> RD document Rohit Klashing_Music (27 May 2026, Page 4)</p>
+
+                <h3>Music Social Features</h3>
+
+                <div class="subsection">
+                    <h4>Snippet Messaging</h4>
+                    <p><strong>Description:</strong> Send a 30-second song snippet to another user as a message to express a feeling or emotion</p>
+                    <p><strong>Use Case:</strong> Communicate through music instead of text</p>
+                </div>
+
+                <div class="subsection">
+                    <h4>Emotion-Based Music Recommendations</h4>
+                    <p><strong>Description:</strong> Playlist suggests songs relevant to the user's current emotion</p>
+                    <p><strong>Implementation:</strong> Recommendation engine based on mood/emotion tags</p>
+                </div>
+
+                <div class="subsection">
+                    <h4>Charts</h4>
+                    <p><strong>Types:</strong></p>
+                    <ul>
+                        <li>Top 40 Independent Klash Charts (already in Epic 2/8)</li>
+                        <li>Additional charts TBD (Top Klashers, Most Played Tracks, etc.)</li>
+                    </ul>
+                </div>
+
+                <h3>Required User Stories to Add</h3>
+                <ol>
+                    <li><strong>F57: Send Music Snippet Message</strong> — As a user, I want to send a 30-second song snippet to another user as a message so that I can express my emotions through music</li>
+                    <li><strong>F58: Emotion-Based Playlist Suggestions</strong> — As a user, I want my playlist to suggest songs based on my current emotion so that I can quickly find music that matches my mood</li>
+                    <li><strong>F59: View Independent Charts</strong> — As a user, I want to see the top 40 Independent Klash Charts so that I can discover trending independent music</li>
+                </ol>
+            </section>
+
+            <!-- Non-Functional Requirements Updates -->
+            <section class="section">
+                <h2>7. Non-Functional Requirements Updates</h2>
+
+                <h3>NF03: Scalability (UPDATE)</h3>
+                <p><strong>Current:</strong></p>
+                <pre><code>NF03 | Scalability | Concurrent users | 10,000 minimum</code></pre>
+
+                <p><strong>Updated:</strong></p>
+                <pre><code>NF03 | Scalability | Concurrent users | Phase 1: 10,000-50,000 concurrent
+Long-term target: Scale to 2,000,000 total users</code></pre>
+
+                <h3>NF07: Cross-Platform Consistency (NEW)</h3>
+                <p><strong>Add New NFR:</strong></p>
+                <pre><code>NF07 | Usability | Cross-platform consistency | User experience must be consistent
+across web (desktop/mobile browser) and native mobile apps (iOS/Android)
+Core features available on all platforms
+Platform-specific features clearly documented</code></pre>
+
+                <h3>NF08: Offline Storage Limit (Independent Klashers) (NEW)</h3>
+                <p><strong>Add New NFR:</strong></p>
+                <pre><code>NF08 | Operational | Music upload constraints | Maximum 3 tracks uploaded simultaneously
+per Independent Klasher (server load management)
+90-day retention period based on engagement metrics
+(plays, downloads, coins gifted, klashes, likes)</code></pre>
+            </section>
+
+            <!-- Open Items Updates -->
+            <section class="section">
+                <h2>8. Open Items & Questions for Lincoln — Updates</h2>
+
+                <h3>Remove (Now Resolved)</h3>
+                <ul>
+                    <li>❌ <strong>Q1.1:</strong> Klash Coin Wallet: Fiat vs Blockchain — <span class="badge badge-completed">RESOLVED (Fiat-backed)</span></li>
+                </ul>
+
+                <h3>Add New Questions</h3>
+                <ol>
+                    <li><strong>Q8.3:</strong> What percentage does the platform (KO) take from Super Klash hosting fees and winnings?</li>
+                    <li><strong>Q8.4:</strong> What are the exact Klash Coin costs for Go Live, Go Live Showcase, and Nudge Play?</li>
+                    <li><strong>Q8.5:</strong> What is "BK" forum type mentioned in the Klashing Music document?</li>
+                    <li><strong>Q8.6:</strong> How does "put on hold/resume" work for forums? Who can trigger it?</li>
+                    <li><strong>Q8.7:</strong> What are the exact Super Klash pot distribution percentages? (1st/2nd/3rd place splits)</li>
+                    <li><strong>Q8.8:</strong> What is the acceptable latency degradation path as we scale from 10K → 100K → 1M → 2M users?</li>
+                    <li><strong>Q8.9:</strong> Mobile vs Web deployment: Simultaneous or sequenced? If simultaneous, who builds mobile app?</li>
+                </ol>
+            </section>
+
+            <!-- Summary of Changes -->
+            <section class="section">
+                <h2>Summary of All SRS Changes Required</h2>
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Section</th>
+                            <th>Change Type</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Introduction</td>
+                            <td>Update</td>
+                            <td>Add mobile app to platform description</td>
+                        </tr>
+                        <tr>
+                            <td>D02 (FCA)</td>
+                            <td>Update</td>
+                            <td>Confirm 1:1 fiat-backed model, remove blockchain references</td>
+                        </tr>
+                        <tr>
+                            <td>Epic 3 (Klashing)</td>
+                            <td>Update</td>
+                            <td>Remove "unlimited" concurrency, add realistic ceiling with 2M scale target</td>
+                        </tr>
+                        <tr>
+                            <td>Epic 4 (Tournaments)</td>
+                            <td>Expand</td>
+                            <td>Add detailed tournament format descriptions (Round-Robin, Swiss, Elimination, FFA)</td>
+                        </tr>
+                        <tr>
+                            <td>Epic 8 (Wallet)</td>
+                            <td>Major Update</td>
+                            <td>Add all transaction types, Super Klash pot distribution, self-custody confirmation</td>
+                        </tr>
+                        <tr>
+                            <td>Epic 10 (Nudge Play)</td>
+                            <td>Expand</td>
+                            <td>Add detailed mechanics (60/90s only, halfway timing, FFA rules, wallet cost)</td>
+                        </tr>
+                        <tr>
+                            <td>Epic 11 (Forums)</td>
+                            <td>Expand</td>
+                            <td>Add forum types (Random, Live, Per Genre, BK), 24hr deadline, pause/resume</td>
+                        </tr>
+                        <tr>
+                            <td>Epic 12 (Music Social)</td>
+                            <td>Expand</td>
+                            <td>Add snippet messaging, emotion-based recommendations, charts</td>
+                        </tr>
+                        <tr>
+                            <td>NF03 (Scalability)</td>
+                            <td>Update</td>
+                            <td>Change from "10K minimum" to "Phase 1: 10-50K, Long-term: 2M users"</td>
+                        </tr>
+                        <tr>
+                            <td>NF07 (NEW)</td>
+                            <td>Add</td>
+                            <td>Cross-platform consistency requirement</td>
+                        </tr>
+                        <tr>
+                            <td>NF08 (NEW)</td>
+                            <td>Add</td>
+                            <td>Independent Klasher upload constraints (3 tracks max, 90-day retention)</td>
+                        </tr>
+                        <tr>
+                            <td>Open Items</td>
+                            <td>Update</td>
+                            <td>Remove Q1.1 (resolved), add 7 new questions (Q8.3-Q8.9)</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>New User Stories Added</h3>
+                <p><strong>Total: 12 new user stories (F48-F59)</strong></p>
+                <ul>
+                    <li>F48-F52: Wallet & Coin transaction types</li>
+                    <li>F53: Nudge Play (updated with full mechanics)</li>
+                    <li>F54-F56: Forum features</li>
+                    <li>F57-F59: Music Social features</li>
+                </ul>
+            </section>
+
+            <footer class="footer">
+                <p>KlashOut Phase 1 Discovery • SRS Updates Summary • 20 July 2026</p>
+            </footer>
+        </main>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+    <script src="assets/js/search.js"></script>
+</body>
+</html>
