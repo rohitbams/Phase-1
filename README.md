@@ -3,7 +3,7 @@
 **Author:** Rohit Bamane
 **Date:** 20 July 2026
 **Status:** Phase 1 Complete — Awaiting Lincoln Sign-Off
-**Contract:** Fixed-fee, milestone-gated | Phase 1: £2,000 (3 deliverables)
+**Contract:** Fixed-fee, milestone-gated | Phase 1
 
 ---
 
@@ -108,7 +108,7 @@ KO_Phase1_Deliverables/
 ### Conflict Register
 **File:** `documents/Conflict_Register.md` | **HTML:** `conflicts.html`
 
-Documents 7 contradictions across 15+ months of source materials with:
+Documents 7 contradictions across several months of source materials with:
 - Precise page references
 - Working assumptions for each
 - Implications on design
@@ -187,31 +187,6 @@ Example decisions:
 3. Wallet integration (Stripe Connect)
 4. Real-time game engine (Socket.io + Redis)
 
----
-
-## Project Conventions
-
-### Cardinal Rule
-**Never guess — flag for Lincoln instead.**
-
-Where the source materials contradict or are ambiguous, this project:
-1. ❌ Does NOT invent an answer
-2. ✅ Records it as an open item
-3. ✅ States an explicit working assumption (labeled as such)
-4. ✅ Flags it for Lincoln's input
-
----
-
-## Contract Summary
-
-**Type:** Fixed-fee, milestone-gated, rolling phase-by-phase
-**Phase 1 Fee:** £2,000
-- £750 non-refundable deposit (paid)
-- £500 per deliverable × 3 (on acceptance)
-
-**Acceptance Period:** 7 business days per deliverable
-**Warranty Period:** 90 days defects liability
-**IP Ownership:** All work product belongs to KlashOut upon full payment
 
 ---
 
