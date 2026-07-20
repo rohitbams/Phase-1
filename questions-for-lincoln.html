@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questions for Lincoln — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html" class="active">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Questions for Lincoln</h1>
+            <p class="page-subtitle">Stakeholder Alignment Meeting Agenda | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Pre-Meeting Notes -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Pre-Meeting Notes</h2>
+                </div>
+                <div class="card-body">
+                    <p>This document contains <strong>all outstanding questions</strong> required to finalize Phase 1 deliverables (Requirements Document and System Design Document).</p>
+
+                    <h3>Priority Levels</h3>
+                    <ul>
+                        <li>🔴 <strong>BLOCKING</strong> — Must be resolved before Phase 2 design can proceed</li>
+                        <li>🟡 <strong>HIGH PRIORITY</strong> — Affects major design decisions</li>
+                        <li>🟢 <strong>MEDIUM PRIORITY</strong> — Needed for completeness, can be deferred if time-limited</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Meeting Format:</strong> Structured Q&A with decision logging<br>
+                    <strong>Expected Duration:</strong> 90-120 minutes</p>
+                </div>
+            </section>
+
+            <!-- Section 1: Financial & Regulatory -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 1: Financial & Regulatory 🔴 BLOCKING</h2>
+                </div>
+                <div class="card-body">
+                    <p class="alert alert-critical">These questions have <strong>legal and financial stakes</strong>. Legal advisor presence recommended.</p>
+
+                    <h3>Q1.1 — Klash Coin Wallet: Fiat vs Blockchain</h3>
+                    <p><strong>Source:</strong> BRD (3 Jan 2026, Page 5) + Wallet & Coin UX doc (Line 7)</p>
+                    <p><strong>Background:</strong> Direct contradiction found in source documents:</p>
+                    <ul>
+                        <li><strong>BRD (3 Jan 2026, Page 5):</strong> <em>"The coin should be based around Ethereum system. KO will create its own blockchain."</em></li>
+                        <li><strong>Wallet & Coin UX doc:</strong> <em>"The coin is a 1 to 1 fiat rate (currency) which is backed by the users."</em></li>
+                    </ul>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Approach</th>
+                                <th>Technology</th>
+                                <th>Regulatory</th>
+                                <th>Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Blockchain/Ethereum</strong></td>
+                                <td>Smart contracts, self-custody, gas fees</td>
+                                <td>Unclear UK crypto regulation</td>
+                                <td>High regulatory uncertainty</td>
+                            </tr>
+                            <tr>
+                                <td><strong>1:1 Fiat-backed</strong></td>
+                                <td>Internal ledger, custodial wallet</td>
+                                <td>FCA e-money regulations</td>
+                                <td>Clear compliance path</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Which approach is correct? (Blockchain / Fiat-backed / Hybrid)</li>
+                        <li>If fiat-backed: Has KO taken legal advice on FCA e-money regulations?</li>
+                        <li>FCA compliance path: KO registers as e-money institution OR partner with licensed provider (Stripe/Mangopay)?</li>
+                        <li>Should blockchain/Ethereum reference be discarded entirely?</li>
+                    </ol>
+
+                    <p class="mt-3"><strong>Recommendation:</strong> Partner with licensed payment provider (Stripe Connect or Mangopay) for FCA compliance. Faster to market than applying for e-money institution status.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q1.2 — Music Licensing Strategy</h3>
+                    <p><strong>Source:</strong> Gaming Mechanic doc (music streaming in klashes) + Wallet & Coin UX doc (music purchase feature)</p>
+                    <p><strong>Background:</strong> KO streams music, clips snippets, and allows purchase. This creates licensing obligations.</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>What is the music library source at Phase 1 launch?
+                            <ul>
+                                <li>Licensed major-label catalogue (requires PPL/PRS licenses)</li>
+                                <li>Independent Klasher uploads only (users own rights)</li>
+                                <li>Hybrid</li>
+                            </ul>
+                        </li>
+                        <li>If major-label: Has KO obtained licenses from PPL (Phonographic Performance Ltd) and PRS (Performing Right Society)?</li>
+                        <li>If user-uploaded: What rights verification process? (User attestation / Content ID matching / Manual review)</li>
+                        <li>Music purchase: How does KO handle mechanical licenses? (Partner with DistroKid/TuneCore / Direct agreements)</li>
+                    </ol>
+
+                    <p class="mt-3"><strong>Recommendation:</strong> Start with <strong>Independent Klasher uploads only</strong> (Phase 1), add licensed catalogue later (Phase 2+). Drastically reduces legal complexity.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q1.3 — Age Verification & Financial Features 🟡 HIGH</h3>
+                    <p><strong>Source:</strong> Inferred from financial transaction features (coin purchase, cash-out) + UK regulatory requirements</p>
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>What is the minimum age for KO? (13+ / 16+ / 18+)</li>
+                        <li>Should users under 18 be blocked from:
+                            <ul>
+                                <li>Purchasing Klash Coins?</li>
+                                <li>Cashing out?</li>
+                                <li>Super Klasher staking?</li>
+                                <li>Go Live features?</li>
+                            </ul>
+                        </li>
+                    </ol>
+
+                    <p class="mt-3"><strong>Recommendation:</strong> 13+ for platform access, <strong>18+ for all financial features</strong>. Aligns with UK gambling age restrictions.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q1.4 — App Store In-App Purchase (IAP) Strategy 🟡 HIGH</h3>
+                    <p><strong>Source:</strong> Meeting Minutes 5 March 2026 (future mobile app mentioned) + Industry knowledge of app store policies</p>
+                    <p><strong>Background:</strong> Apple/Google require digital goods purchased within apps to use their IAP system (15-30% commission).</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Are you aware of this commission structure?</li>
+                        <li>Preferred approach:
+                            <ul>
+                                <li>Comply with IAP and absorb commission</li>
+                                <li>Web-based purchase workaround (buy on website, use in app)</li>
+                                <li>Price coins higher on mobile to offset commission</li>
+                            </ul>
+                        </li>
+                        <li>When is mobile app expected to launch?</li>
+                    </ol>
+
+                    <p class="mt-3"><strong>Recommendation:</strong> Web-based purchase initially. Compliant and avoids 30% commission.</p>
+                </div>
+            </section>
+
+            <!-- Section 2: Game Mechanics -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 2: Game Mechanics & Voting 🟡 HIGH</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q2.1 — Winner Determination Logic</h3>
+                    <p><strong>Source:</strong> BRD Page 4 ("Ending of a game") + Gaming Mechanic doc Step 9 (audience voting)</p>
+                    <p><strong>Background:</strong> BRD describes multiple ways a winner is determined (gifts, likes, comments, KO algorithm). Gaming Mechanic doc describes simple audience voting.</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Primary result mechanism:
+                            <ul>
+                                <li>Simple audience vote (one vote per spectator)</li>
+                                <li>Weighted scoring (gifts + likes + comments)</li>
+                                <li>Hybrid (voting primary, algorithm fallback)</li>
+                            </ul>
+                        </li>
+                        <li>If weighted scoring: What are the coefficients? (1 gift = X votes, 1 like = Y votes, etc.)</li>
+                        <li>What is the "KO algorithm"?</li>
+                        <li>Minimum audience size for valid vote?</li>
+                    </ol>
+
+                    <p class="mt-3"><strong>Recommendation:</strong> <strong>Hybrid approach</strong> — primary is simple audience vote. If fewer than 5 spectators, algorithm decides (random selection initially).</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q2.2 — Nudge Play Mechanic 🔴 BLOCKING</h3>
+                    <p><strong>Source:</strong> Wallet & Coin UX doc (Nudge Play feature mentioned with timing constraints)</p>
+                    <p><strong>Background:</strong> Wallet & Coin UX doc says Nudge Play can be used "10 seconds into a klash but cannot be used 10 seconds before the klash end." But <strong>what does it actually do</strong>?</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>What is the game effect of Nudge Play?
+                            <ul>
+                                <li>Interrupts opponent's track playback (skip/mute)</li>
+                                <li>Visual distraction on opponent's screen</li>
+                                <li>Allows nudger to play own snippet mid-game</li>
+                                <li>Allows nudger to join ongoing klash as third participant</li>
+                            </ul>
+                        </li>
+                        <li>Can opponent counter-nudge?</li>
+                        <li>Is there a limit per klash? (1 nudge / 3 nudges / Unlimited)</li>
+                    </ol>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q2.3 — Voting Mechanism Details</h3>
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Voting UI: Single "Like" button / Points allocation / Star rating</li>
+                        <li>Voting window duration (seconds after second snippet plays)</li>
+                        <li>Can spectators change their vote?</li>
+                        <li>Are votes visible in real-time or hidden until close?</li>
+                    </ol>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q2.4 — Points System Values</h3>
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Points per win: _____ points</li>
+                        <li>Points lost per loss: _____ points</li>
+                        <li>Can points go below zero?</li>
+                        <li>Do draws affect points?</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 3: Scalability -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 3: Scalability & Concurrency 🔴 BLOCKING</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q3.1 — Super Klash Participant Ceiling</h3>
+                    <p><strong>Source:</strong> BRD Page 4 ("infinite number of players") + BRD Page 7 ("multiverse" concept for 100K+ users) + Gaming Mechanic doc Line 166 ("unlimited participants")</p>
+                    <p><strong>Background:</strong> BRD says klashes can have "an infinite number of players" and Super Klashers can host "unlimited participants." Technically, there must be a ceiling.</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>What is the realistic maximum number of participants for a single Super Klash at Phase 1 launch?
+                            <ul>
+                                <li>100 (conservative, easy to deliver)</li>
+                                <li>1,000 (achievable, requires solid engineering)</li>
+                                <li>10,000 (ambitious, requires load balancing)</li>
+                                <li>100,000+ (requires "multiverse" sharding)</li>
+                            </ul>
+                        </li>
+                        <li>The BRD describes an "infinite multiverse" concept where large events split into parallel simulations. Is this something you want?</li>
+                    </ol>
+
+                    <p class="mt-3"><strong>Recommendation:</strong> Design for <strong>10,000 participant ceiling</strong> at Phase 1 with horizontal scaling capability.</p>
+                </div>
+            </section>
+
+            <!-- Section 4: User Tiers -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 4: User Tiers & Progression 🟢 MEDIUM</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q4.1 — Tier Upgrade Process</h3>
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>How does standard Klasher become Independent Klasher? (Automatic if upload / Application / Payment / Achievement threshold)</li>
+                        <li>How does Klasher become Super Klasher? (Threshold / Application / Payment / Invitation only)</li>
+                        <li>Can users have multiple tier statuses simultaneously?</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 5: Genres -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 5: Klash Spaces & Genres 🟢 MEDIUM</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q5.1 — Definitive Genre List</h3>
+                    <p><strong>Source:</strong> BRD Page 4 (genre list provided)</p>
+                    <p><strong>Background:</strong> BRD lists: Reggae, Metal, House, Punk, Soul, Rock, R&B, Indie, Jazz, Hip Hop, International music, Classical, Pop, British underground.</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Is this the final list for Phase 1?</li>
+                        <li>What does "International music" include? (All non-English / Specific regions like Afrobeats, K-Pop, Latin, etc.)</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 6: Undefined Terms -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 6: Undefined Terms & Ambiguities 🟢 LOW</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q6.1 — Undefined Terms</h3>
+                    <p>Please define:</p>
+                    <ol>
+                        <li><strong>"BK"</strong> (appears in Gaming doc re: Forums)</li>
+                        <li><strong>"amp"</strong> (appears on profile page in BRD)</li>
+                        <li><strong>"KO Prizes"</strong> (mentioned but description cut off)</li>
+                    </ol>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q6.2 — Friend Invitation Requirement</h3>
+                    <p><strong>Background:</strong> BRD says "A Klasher can only commence klashing once a friend is invited."</p>
+                    <p><strong>Question:</strong> Does this mean user must invite one friend before first klash (anti-spam) OR must have friend online to matchmake?</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Q6.3 — Klash Coin Receiving Threshold</h3>
+                    <p><strong>Source:</strong> BRD (1K followers + 1K wins threshold mentioned for standard Klashers)</p>
+                    <p><strong>Background:</strong> BRD says standard Klashers need "minimum 1000 followers and 1000 wins to receive klash coins" but Independent Klashers can "receive straight away."</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Does 1K/1K threshold apply to only gifts OR all coin receipts (winnings, showcase)?</li>
+                        <li>If standard Klasher wins klash with coin prize but doesn't meet threshold, what happens? (Escrow / Lost / Converted to points)</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 7: Timeline -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 7: Sequencing 🟡 MEDIUM</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q7.1 — Web-First Sequencing Confirmation</h3>
+                    <p><strong>Source:</strong> Meeting Minutes 5 March 2026 (sequencing decision documented)</p>
+                    <p><strong>Background:</strong> Meeting minutes (5 March 2026) state website built first, app developer hired later.</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Confirm this is still the plan?</li>
+                        <li>When do you expect to hire app developer?</li>
+                        <li>Should API be designed for potential public third-party access, or internal-only?</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 8: Go Live -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 8: Go Live & Showcase 🟢 MEDIUM</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q8.1 — Go Live Showcase Monetization</h3>
+                    <p><strong>Background:</strong> Wallet & Coin UX doc says Go Live Showcase is for Independent Artists to perform and increase "financial rewards." How do they earn beyond gifted coins?</p>
+
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Do performers earn: Only gifts / Ticket sales / Revenue share from KO / Other?</li>
+                        <li>Is there a showcase entry fee?</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Section 9: Super Klasher Pot -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 9: Super Klasher Pot Distribution 🟢 MEDIUM</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q9.1 — Pot Split Percentages</h3>
+                    <p><strong>Background:</strong> Super Klasher sets entry fee, pot distributed to 1st/2nd/3rd place + host fee. <strong>What are the percentages?</strong></p>
+
+                    <p><strong>Example:</strong> 10 players, £5 entry = £50 pot. How is it split?</p>
+                    <ol>
+                        <li>1st place: _____% = £_____</li>
+                        <li>2nd place: _____% = £_____</li>
+                        <li>3rd place: _____% = £_____</li>
+                        <li>Super Klasher host fee: _____% = £_____</li>
+                    </ol>
+                    <p><strong>Total must = 100%</strong></p>
+                </div>
+            </section>
+
+            <!-- Section 10: Chat -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Section 10: Chat & Moderation 🟢 LOW</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Q10.1 — Chat Rules</h3>
+                    <p><strong>Questions:</strong></p>
+                    <ol>
+                        <li>Who can send chat messages during klash? (Only klashers / Klashers + spectators)</li>
+                        <li>Character limit per message: _____ characters</li>
+                        <li>Profanity filter?</li>
+                        <li>Real-time moderation? (Automated / Manual / None)</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- Post-Meeting Actions -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Post-Meeting Actions</h2>
+                </div>
+                <div class="card-body">
+                    <p>After this meeting, the following will be completed:</p>
+                    <ol>
+                        <li>Log all decisions in Design Decisions Log</li>
+                        <li>Update Requirements Document with confirmed values</li>
+                        <li>Finalize System Design Document using decisions</li>
+                        <li>Close all open items in SRS</li>
+                        <li>Submit Phase 1 deliverables for 7-day acceptance review</li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

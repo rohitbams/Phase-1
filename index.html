@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KlashOut Phase 1 — Technical Documentation</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html" class="active">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Phase 1 Discovery — Technical Documentation</h1>
+            <p class="page-subtitle">Requirements Engineering & System Design | Rohit Bamane | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Overview -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Project Overview</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>KlashOut</strong> is a music competition and social platform combining real-time gaming, streaming, and a digital economy. Users compete in head-to-head "Klashes" where audience votes determine winners.</p>
+
+                    <p><strong>Phase 1 Scope:</strong> Requirements engineering and system design specification. This phase produces technical documentation to enable unambiguous Phase 2 implementation.</p>
+
+                    <div class="alert alert-info mt-3">
+                        <div class="alert-title">📋 Deliverables</div>
+                        <p class="mb-0">Requirements Document (SRS), System Design Document (SDD), and supporting technical artefacts including conflict analysis and architectural decisions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Status Dashboard -->
+            <section>
+                <h2>Deliverables Status</h2>
+                <div class="dashboard">
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-title">Requirements Document</div>
+                        <div class="dashboard-card-value">85%</div>
+                        <div class="dashboard-card-progress">
+                            <div class="dashboard-card-progress-bar" data-progress="85"></div>
+                        </div>
+                        <div class="dashboard-card-status">
+                            <span class="badge badge-in-progress">In Progress</span><br>
+                            <small>12 Epics, 5 Domain Requirements, 10 NFRs<br>
+                            18 open items flagged</small>
+                        </div>
+                    </div>
+
+                    <div class="dashboard-card">
+                        <div class="dashboard-card-title">System Design Document</div>
+                        <div class="dashboard-card-value">80%</div>
+                        <div class="dashboard-card-progress">
+                            <div class="dashboard-card-progress-bar" data-progress="80"></div>
+                        </div>
+                        <div class="dashboard-card-status">
+                            <span class="badge badge-in-progress">Draft Complete</span><br>
+                            <small>4+1 view model, data schema, API design<br>
+                            4 blocking items identified</small>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- Critical Issues -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">🔴 Critical Contradictions</h2>
+                </div>
+                <div class="card-body">
+                    <p>Four contradictions in source materials require resolution before Phase 2:</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Issue</th>
+                                <th>Impact</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>C01</strong></td>
+                                <td>FCA / Wallet Approach: Blockchain vs Fiat-Backed</td>
+                                <td>Regulatory compliance, wallet architecture</td>
+                                <td><span class="badge badge-blocked">BLOCKING</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>C02</strong></td>
+                                <td>Winner Determination: Voting vs Weighted Scoring</td>
+                                <td>Game mechanics, database schema</td>
+                                <td><span class="badge badge-should-have">HIGH</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>C03</strong></td>
+                                <td>Web-First Sequencing</td>
+                                <td>API-first architecture mandate</td>
+                                <td><span class="badge badge-completed">RESOLVED</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>C04</strong></td>
+                                <td>Concurrency Ceiling: "Unlimited" not buildable</td>
+                                <td>WebSocket scaling, infrastructure</td>
+                                <td><span class="badge badge-blocked">BLOCKING</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Next Action:</strong> Stakeholder alignment meeting using <a href="questions-for-lincoln.html">Questions for Lincoln</a> document.</p>
+                </div>
+            </section>
+
+            <!-- Architecture Overview -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Architecture Summary</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Design Approach</h3>
+                    <p><strong>API-First, Client-Agnostic Backend</strong> — Mandated by web-first sequencing. All business logic resides server-side; web and future mobile clients are thin presentation layers consuming the same API.</p>
+
+                    <h3>Technology Stack (Proposed)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Layer</th>
+                                <th>Technology</th>
+                                <th>Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Backend API</td>
+                                <td>Node.js + Express.js</td>
+                                <td>JavaScript full-stack, WebSocket support</td>
+                            </tr>
+                            <tr>
+                                <td>Database</td>
+                                <td>PostgreSQL</td>
+                                <td>ACID-compliant for financial transactions</td>
+                            </tr>
+                            <tr>
+                                <td>Real-Time</td>
+                                <td>Socket.io</td>
+                                <td>Room-based pub/sub for Klash events</td>
+                            </tr>
+                            <tr>
+                                <td>Cache</td>
+                                <td>Redis</td>
+                                <td>Leaderboards, active game state</td>
+                            </tr>
+                            <tr>
+                                <td>Frontend (Web)</td>
+                                <td>React + TypeScript</td>
+                                <td>Industry standard, type safety</td>
+                            </tr>
+                            <tr>
+                                <td>Payment</td>
+                                <td>Stripe Connect</td>
+                                <td>FCA-licensed e-money provider</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Key Design Decisions</h3>
+                    <ul>
+                        <li><strong>Double-Entry Ledger</strong> — Wallet implemented as internal ledger with ACID transactions, not blockchain</li>
+                        <li><strong>Modular Monolith</strong> — Clear service boundaries (User, Klash, Wallet, Music, Social) enable future microservices migration</li>
+                        <li><strong>Horizontal Scaling</strong> — Stateless API servers, Redis pub/sub for multi-server WebSockets</li>
+                        <li><strong>Partnered FCA Compliance</strong> — Stripe/Mangopay handles e-money licensing vs KO applying for own license</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Data Model -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Data Model Overview</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Core Entities</h3>
+                    <p>The data model splits into two subdomains:</p>
+
+                    <h4>Social / Gaming Core</h4>
+                    <ul>
+                        <li><code>User</code> — Authentication, profiles, tier (Klasher/Independent/Super)</li>
+                        <li><code>Genre</code> — Controlled vocabulary for Klash spaces</li>
+                        <li><code>Track</code> — Music files (user-uploaded or licensed catalogue)</li>
+                        <li><code>Playlist</code> — User-curated track collections</li>
+                        <li><code>Klash</code> — Game instances with state machine</li>
+                        <li><code>KlashParticipation</code> — Associative entity (User ↔ Klash with role, track, outcome)</li>
+                        <li><code>Vote</code> — Audience votes during klash</li>
+                        <li><code>Tournament</code> — Organized competitions (Round Robin, Swiss, Elimination)</li>
+                    </ul>
+
+                    <h4 class="mt-3">Economy</h4>
+                    <ul>
+                        <li><code>Wallet</code> — Polymorphic (belongs to User OR Klash for pot escrow)</li>
+                        <li><code>Transaction</code> — Double-entry ledger (from_wallet_id → to_wallet_id, all types unified)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Key Modelling Decisions</h3>
+                    <ul>
+                        <li><strong>Tier as attribute</strong> — Not an entity (3 fixed values: Klasher, Independent, Super)</li>
+                        <li><strong>Genre as entity</strong> — Referenced by both Track and Klash</li>
+                        <li><strong>Transaction types unified</strong> — Single table with discriminator (top-up, gift, purchase, winnings, cash-out)</li>
+                        <li><strong>Balance stored-but-derived</strong> — <code>Wallet.balance</code> updated atomically, recomputed daily for audit</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Non-Functional Requirements -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Non-Functional Requirements</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>Requirement</th>
+                                <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NF01</strong></td>
+                                <td>Performance</td>
+                                <td>API response time (95th percentile)</td>
+                                <td>≤ 500ms</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF02</strong></td>
+                                <td>Performance</td>
+                                <td>Real-time event delivery</td>
+                                <td>≤ 200ms</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF03</strong></td>
+                                <td>Scalability</td>
+                                <td>Concurrent users</td>
+                                <td>10,000 minimum</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF04</strong></td>
+                                <td>Availability</td>
+                                <td>Monthly uptime</td>
+                                <td>≥ 99.5%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF05</strong></td>
+                                <td>Security</td>
+                                <td>Authentication</td>
+                                <td>JWT with refresh tokens, rate limiting</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF06</strong></td>
+                                <td>Security</td>
+                                <td>Financial transactions</td>
+                                <td>ACID-compliant, zero unbalanced transactions</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Next Steps -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Next Steps</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Immediate Actions</h3>
+                    <ol>
+                        <li>Schedule stakeholder alignment meeting with Lincoln</li>
+                        <li>Resolve 4 blocking contradictions + 18 open items</li>
+                        <li>Update SRS & SDD with confirmed decisions</li>
+                        <li>Submit Phase 1 deliverables for acceptance review</li>
+                    </ol>
+
+                    <h3 class="mt-3">After Sign-Off</h3>
+                    <ol>
+                        <li>Backend API development (Node.js + Express + PostgreSQL)</li>
+                        <li>Web frontend development (React + TypeScript)</li>
+                        <li>Wallet integration (Stripe Connect for FCA compliance)</li>
+                        <li>Real-time game engine (Socket.io + Redis)</li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

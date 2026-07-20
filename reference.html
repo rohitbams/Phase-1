@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reference Tables — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="reference.html" class="active">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Reference Tables</h1>
+            <p class="page-subtitle">Quick Reference Data | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Introduction -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Document Purpose</h2>
+                </div>
+                <div class="card-body">
+                    <p>This document provides quick reference tables for controlled vocabularies, enumerations, and key data structures used throughout the KlashOut platform.</p>
+                </div>
+            </section>
+
+            <!-- User Tiers -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">User Tiers</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Tier</th>
+                                <th>Color (BRD)</th>
+                                <th>Key Permissions</th>
+                                <th>Coin Receiving Threshold</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Klasher</strong></td>
+                                <td>Blue</td>
+                                <td>
+                                    <ul>
+                                        <li>Compete in klashes</li>
+                                        <li>Browse music catalogue</li>
+                                        <li>Vote as spectator</li>
+                                        <li>Follow other users</li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <strong>⚠️ UNCONFIRMED:</strong><br>
+                                    BRD states "minimum 1000 followers AND 1000 wins to receive klash coins"
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Independent Klasher</strong></td>
+                                <td>Gold</td>
+                                <td>
+                                    <ul>
+                                        <li>All Klasher permissions</li>
+                                        <li><strong>Upload own music</strong></li>
+                                        <li><strong>Receive coins immediately</strong> (no threshold)</li>
+                                        <li>Host Go Live Showcase</li>
+                                        <li>Sell music directly</li>
+                                    </ul>
+                                </td>
+                                <td>None (can receive immediately)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Super Klasher</strong></td>
+                                <td>Pink</td>
+                                <td>
+                                    <ul>
+                                        <li>All Independent Klasher permissions</li>
+                                        <li><strong>Host Super Klashes</strong> (unlimited participants)</li>
+                                        <li>Set entry fees</li>
+                                        <li>Earn host fee from pot</li>
+                                        <li>Create tournaments</li>
+                                    </ul>
+                                </td>
+                                <td>None (can receive immediately)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Note:</strong> Tier is stored as <code>User.tier</code> attribute (not separate entity). Upgrade process requires Lincoln confirmation (see <a href="questions-for-lincoln.html">Q4.1</a>).</p>
+                </div>
+            </section>
+
+            <!-- Genres -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Genres (Klash Spaces)</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Source:</strong> BRD Page 4</p>
+                    <p>Genres are stored as <code>Genre</code> entity (referenced by both <code>Track</code> and <code>Klash</code>).</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Genre Name</th>
+                                <th>Slug (Example)</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Reggae</td>
+                                <td><code>reggae</code></td>
+                                <td>Core genre (sound clash origin)</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Metal</td>
+                                <td><code>metal</code></td>
+                                <td>Heavy metal and subgenres</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>House</td>
+                                <td><code>house</code></td>
+                                <td>Electronic dance music</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Punk</td>
+                                <td><code>punk</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>Soul</td>
+                                <td><code>soul</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>6</td>
+                                <td>Rock</td>
+                                <td><code>rock</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>7</td>
+                                <td>R&B</td>
+                                <td><code>rnb</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>8</td>
+                                <td>Indie</td>
+                                <td><code>indie</code></td>
+                                <td>Independent music</td>
+                            </tr>
+                            <tr>
+                                <td>9</td>
+                                <td>Jazz</td>
+                                <td><code>jazz</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>10</td>
+                                <td>Hip Hop</td>
+                                <td><code>hip-hop</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>11</td>
+                                <td>International music</td>
+                                <td><code>international</code></td>
+                                <td><strong>⚠️ AMBIGUOUS</strong> — See <a href="questions-for-lincoln.html">Q5.1</a></td>
+                            </tr>
+                            <tr>
+                                <td>12</td>
+                                <td>Classical</td>
+                                <td><code>classical</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>13</td>
+                                <td>Pop</td>
+                                <td><code>pop</code></td>
+                                <td>—</td>
+                            </tr>
+                            <tr>
+                                <td>14</td>
+                                <td>British underground</td>
+                                <td><code>british-underground</code></td>
+                                <td>UK-specific genre</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Implementation:</strong> Genres seeded at database initialization. Users cannot create custom genres (controlled vocabulary).</p>
+                </div>
+            </section>
+
+            <!-- Klash Types -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Klash Types</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Participants</th>
+                                <th>Entry Fee</th>
+                                <th>Host</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>HEAD_TO_HEAD</code></td>
+                                <td>2 klashers</td>
+                                <td>Optional</td>
+                                <td>System (matchmaking)</td>
+                                <td>Classic 1v1 klash via matchmaking</td>
+                            </tr>
+                            <tr>
+                                <td><code>DIRECT_CHALLENGE</code></td>
+                                <td>2 klashers</td>
+                                <td>Optional</td>
+                                <td>Challenger</td>
+                                <td>User challenges specific opponent (F09)</td>
+                            </tr>
+                            <tr>
+                                <td><code>GROUP</code></td>
+                                <td>3+ klashers</td>
+                                <td>Optional</td>
+                                <td>Creator</td>
+                                <td>Free-for-all group competition</td>
+                            </tr>
+                            <tr>
+                                <td><code>SUPER</code></td>
+                                <td>Unlimited (realistically 10K ceiling)</td>
+                                <td><strong>Required</strong></td>
+                                <td>Super Klasher</td>
+                                <td>Large-scale event with pot distribution</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Snippet Durations:</strong> 30 seconds, 60 seconds, or 90 seconds (set per klash).</p>
+                </div>
+            </section>
+
+            <!-- Klash States -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Klash State Machine</h2>
+                </div>
+                <div class="card-body">
+                    <p>Each klash follows this finite state machine (see <a href="design-decisions.html">DD-007</a>):</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Duration</th>
+                                <th>Actions</th>
+                                <th>Next State</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>MATCHMAKING</code></td>
+                                <td>Until 2 players matched</td>
+                                <td>System pairs users by genre</td>
+                                <td><code>READY</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>READY</code></td>
+                                <td>5 seconds</td>
+                                <td>Both players confirm</td>
+                                <td><code>COUNTDOWN</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>COUNTDOWN</code></td>
+                                <td>⚠️ TBD (Lincoln)</td>
+                                <td>Visual countdown</td>
+                                <td><code>PLAYING_1</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>PLAYING_1</code></td>
+                                <td>30/60/90s</td>
+                                <td>First Klasher's snippet plays</td>
+                                <td><code>DECISION_WINDOW</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>DECISION_WINDOW</code></td>
+                                <td>⚠️ TBD (Lincoln)</td>
+                                <td>Second Klasher: stick or switch</td>
+                                <td><code>PLAYING_2</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>PLAYING_2</code></td>
+                                <td>30/60/90s</td>
+                                <td>Second Klasher's snippet plays</td>
+                                <td><code>VOTING</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>VOTING</code></td>
+                                <td>⚠️ TBD (Lincoln)</td>
+                                <td>Spectators vote</td>
+                                <td><code>CALCULATING</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>CALCULATING</code></td>
+                                <td>&lt;2s</td>
+                                <td>Backend tallies votes</td>
+                                <td><code>RESULT</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>RESULT</code></td>
+                                <td>10s</td>
+                                <td>Winner displayed</td>
+                                <td><code>COMPLETED</code></td>
+                            </tr>
+                            <tr>
+                                <td><code>COMPLETED</code></td>
+                                <td>—</td>
+                                <td>Final state, archived</td>
+                                <td>—</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Note:</strong> Server is authoritative. Clients cannot skip states.</p>
+                </div>
+            </section>
+
+            <!-- Transaction Types -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Transaction Types</h2>
+                </div>
+                <div class="card-body">
+                    <p>All wallet transactions stored in single <code>Transaction</code> table with <code>type</code> discriminator (see <a href="design-decisions.html">DD-009</a>).</p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>From Wallet</th>
+                                <th>To Wallet</th>
+                                <th>Trigger</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>TOP_UP</code></td>
+                                <td>NULL (external)</td>
+                                <td>User wallet</td>
+                                <td>User purchases coins via Stripe</td>
+                            </tr>
+                            <tr>
+                                <td><code>GIFT</code></td>
+                                <td>User wallet A</td>
+                                <td>User wallet B</td>
+                                <td>User A gifts coins to User B</td>
+                            </tr>
+                            <tr>
+                                <td><code>MUSIC_PURCHASE</code></td>
+                                <td>User wallet (buyer)</td>
+                                <td>User wallet (artist)</td>
+                                <td>User purchases track from Independent Klasher</td>
+                            </tr>
+                            <tr>
+                                <td><code>KLASH_ENTRY</code></td>
+                                <td>User wallet</td>
+                                <td>Klash wallet (pot)</td>
+                                <td>User enters Super Klash with entry fee</td>
+                            </tr>
+                            <tr>
+                                <td><code>KLASH_WINNINGS</code></td>
+                                <td>Klash wallet (pot)</td>
+                                <td>User wallet (winner)</td>
+                                <td>Klash ends, pot distributed to winner(s)</td>
+                            </tr>
+                            <tr>
+                                <td><code>HOST_FEE</code></td>
+                                <td>Klash wallet (pot)</td>
+                                <td>User wallet (Super Klasher)</td>
+                                <td>Super Klasher's host fee from pot</td>
+                            </tr>
+                            <tr>
+                                <td><code>GO_LIVE</code></td>
+                                <td>User wallet (spectator)</td>
+                                <td>User wallet (performer)</td>
+                                <td>Spectator tips performer during Go Live Showcase</td>
+                            </tr>
+                            <tr>
+                                <td><code>NUDGE_PLAY</code></td>
+                                <td>User wallet (nudger)</td>
+                                <td>System wallet (KO revenue)</td>
+                                <td>User pays to use Nudge Play mechanic</td>
+                            </tr>
+                            <tr>
+                                <td><code>CASH_OUT</code></td>
+                                <td>User wallet</td>
+                                <td>NULL (external)</td>
+                                <td>User cashes out to bank account via Stripe</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>Status Values:</strong> <code>PENDING</code>, <code>COMPLETED</code>, <code>FAILED</code>, <code>REVERSED</code></p>
+                </div>
+            </section>
+
+            <!-- NFRs -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Non-Functional Requirements (NFRs)</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Category</th>
+                                <th>Requirement</th>
+                                <th>Target</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NF01</strong></td>
+                                <td>Performance</td>
+                                <td>API response time (95th percentile)</td>
+                                <td>≤ 500ms</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF02</strong></td>
+                                <td>Performance</td>
+                                <td>Real-time event delivery</td>
+                                <td>≤ 200ms</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF03</strong></td>
+                                <td>Scalability</td>
+                                <td>Concurrent users</td>
+                                <td>10,000 minimum</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF04</strong></td>
+                                <td>Availability</td>
+                                <td>Monthly uptime</td>
+                                <td>≥ 99.5%</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF05</strong></td>
+                                <td>Security</td>
+                                <td>Authentication</td>
+                                <td>JWT with refresh tokens, rate limiting</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF06</strong></td>
+                                <td>Security</td>
+                                <td>Financial transactions</td>
+                                <td>ACID-compliant, zero unbalanced transactions</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF07</strong></td>
+                                <td>Reliability</td>
+                                <td>Data backup</td>
+                                <td>Daily automated backups, 30-day retention</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF08</strong></td>
+                                <td>Compliance</td>
+                                <td>GDPR</td>
+                                <td>Right to deletion, data portability, consent management</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF09</strong></td>
+                                <td>Compliance</td>
+                                <td>FCA e-money regulations</td>
+                                <td>Partner with licensed provider (Stripe/Mangopay)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF10</strong></td>
+                                <td>Usability</td>
+                                <td>Accessibility</td>
+                                <td>WCAG 2.1 Level AA compliance</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- MoSCoW Priorities -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">MoSCoW Priority Levels</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Priority</th>
+                                <th>Badge</th>
+                                <th>Definition</th>
+                                <th>Phase 1 Expectation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Must Have</strong></td>
+                                <td><span class="badge badge-must-have">MUST HAVE</span></td>
+                                <td>Core functionality — platform cannot launch without this</td>
+                                <td>100% delivered</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Should Have</strong></td>
+                                <td><span class="badge badge-should-have">SHOULD HAVE</span></td>
+                                <td>Important but not vital — workarounds exist</td>
+                                <td>80%+ delivered</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Could Have</strong></td>
+                                <td><span class="badge badge-could-have">COULD HAVE</span></td>
+                                <td>Desirable but not necessary — nice-to-have</td>
+                                <td>If time permits</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Won't Have</strong></td>
+                                <td><span class="badge badge-wont-have">WON'T HAVE</span></td>
+                                <td>Explicitly deferred to future phase</td>
+                                <td>0% (documented for Phase 2+)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- HTTP Status Codes -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Standard API Response Codes</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Meaning</th>
+                                <th>Usage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>200</strong></td>
+                                <td>OK</td>
+                                <td>Successful GET, PATCH, DELETE</td>
+                            </tr>
+                            <tr>
+                                <td><strong>201</strong></td>
+                                <td>Created</td>
+                                <td>Successful POST (resource created)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>204</strong></td>
+                                <td>No Content</td>
+                                <td>Successful DELETE (no response body)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>400</strong></td>
+                                <td>Bad Request</td>
+                                <td>Invalid input, validation error</td>
+                            </tr>
+                            <tr>
+                                <td><strong>401</strong></td>
+                                <td>Unauthorized</td>
+                                <td>Missing or invalid JWT</td>
+                            </tr>
+                            <tr>
+                                <td><strong>403</strong></td>
+                                <td>Forbidden</td>
+                                <td>Authenticated but insufficient permissions (e.g., Klasher trying to upload music)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>404</strong></td>
+                                <td>Not Found</td>
+                                <td>Resource does not exist</td>
+                            </tr>
+                            <tr>
+                                <td><strong>409</strong></td>
+                                <td>Conflict</td>
+                                <td>Duplicate resource (email already exists, klasher_name taken)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>422</strong></td>
+                                <td>Unprocessable Entity</td>
+                                <td>Business logic error (insufficient balance, voting window closed)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>429</strong></td>
+                                <td>Too Many Requests</td>
+                                <td>Rate limit exceeded</td>
+                            </tr>
+                            <tr>
+                                <td><strong>500</strong></td>
+                                <td>Internal Server Error</td>
+                                <td>Unexpected server error</td>
+                            </tr>
+                            <tr>
+                                <td><strong>503</strong></td>
+                                <td>Service Unavailable</td>
+                                <td>Maintenance mode, database down</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

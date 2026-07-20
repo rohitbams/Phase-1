@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Design Document — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html" class="active">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">System Design Document (SDD)</h1>
+            <p class="page-subtitle">Technical Architecture Specification | Draft v0.9 | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Document Status -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">⚠️ Document Status</h2>
+                </div>
+                <div class="card-body">
+                    <p class="alert alert-warning">This first draft of SDD is <strong>~80% complete</strong>. A more thorough version will be produced after the SRS is signed off. The following <strong>4 items require Lincoln's confirmation</strong> before finalization:</p>
+
+                    <ol>
+                        <li><strong>Wallet Approach</strong> (C01) — Assumed: 1:1 fiat-backed internal ledger (NOT blockchain)</li>
+                        <li><strong>Winner Logic</strong> (C02) — Assumed: Audience vote primary, algorithm fallback</li>
+                        <li><strong>FCA Compliance</strong> — Assumed: Partner with Stripe/Mangopay (NOT KO e-money license)</li>
+                        <li><strong>Concurrency Ceiling</strong> (C04) — Assumed: 10K max participants, horizontal scaling</li>
+                    </ol>
+
+                    <p class="mt-3">See <a href="conflicts.html">Conflict Register</a> and <a href="questions-for-lincoln.html">Questions for Lincoln</a> for details.</p>
+                </div>
+            </section>
+
+            <!-- Executive Summary -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Executive Summary</h2>
+                </div>
+                <div class="card-body">
+                    <h3>System Purpose</h3>
+                    <p>KlashOut is a multi-platform (web-first, mobile later) music competition and social platform where users compete in real-time "Klashes" — head-to-head music battles judged by audience votes.</p>
+
+                    <p>The platform integrates:</p>
+                    <ul>
+                        <li><strong>Music streaming</strong> (user-uploaded tracks, future licensed catalogue)</li>
+                        <li><strong>Real-time gaming</strong> (matchmaking, live competition, voting)</li>
+                        <li><strong>Social networking</strong> (profiles, followers, messaging, playlists)</li>
+                        <li><strong>Digital economy</strong> (1:1 fiat-backed Klash Coin for transactions)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Key Design Drivers</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Requirement</th>
+                                <th>Design Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>NF03:</strong> 10,000 concurrent users</td>
+                                <td>Horizontal scaling, stateless services, WebSocket sharding</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF02:</strong> ≤200ms real-time event delivery</td>
+                                <td>WebSockets (Socket.io), room-based pub/sub, Redis caching</td>
+                            </tr>
+                            <tr>
+                                <td><strong>NF06:</strong> ACID financial transactions</td>
+                                <td>PostgreSQL, double-entry ledger, database-level constraints</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Web-first sequencing</strong></td>
+                                <td>API-first architecture, client-agnostic backend</td>
+                            </tr>
+                            <tr>
+                                <td><strong>FCA e-money compliance</strong></td>
+                                <td>Partner with licensed payment provider (Stripe/Mangopay)</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Architectural Style</h3>
+                    <p><strong>Selected:</strong> Microservices-lite (modular monolith with API-first design, future microservices migration path)</p>
+                    <p><strong>Rationale:</strong> Phase 1 serves &lt;10K users — full microservices is over-engineered. Modular monolith is faster to develop and easier to debug. Clear service boundaries enable future splitting if needed.</p>
+                </div>
+            </section>
+
+            <!-- Architecture Overview -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Architecture Overview</h2>
+                </div>
+                <div class="card-body">
+                    <h3>High-Level Architecture</h3>
+                    <pre><code>┌─────────────────────────────────────────────────────────┐
+│                    CLIENT LAYER                          │
+├─────────────────────────────────────────────────────────┤
+│  Web App (React)     │    Future Mobile App             │
+│  - Klashers (DJs)    │    - Spectators                  │
+│  - Artists           │    - Casual users                │
+└───────────┬─────────────────────┬───────────────────────┘
+            │                     │
+            │    REST / WebSocket │
+            ▼                     ▼
+┌─────────────────────────────────────────────────────────┐
+│                 API GATEWAY LAYER                        │
+├─────────────────────────────────────────────────────────┤
+│  Express.js API Server (Node.js)                        │
+│  - Authentication (JWT)                                  │
+│  - Rate Limiting                                         │
+│  - Request Validation                                    │
+└───────────┬─────────────────────────────────────────────┘
+            │
+            ▼
+┌─────────────────────────────────────────────────────────┐
+│              APPLICATION LAYER                           │
+├─────────────────────────────────────────────────────────┤
+│  Modular Services (Future Microservices)                │
+│  ┌────────┬────────┬────────┬────────┬────────────┐    │
+│  │ User   │ Klash  │ Wallet │ Music  │ Social     │    │
+│  │ Service│ Service│ Service│ Service│ Service    │    │
+│  └────────┴────────┴────────┴────────┴────────────┘    │
+└───────────┬─────────────────────────────────────────────┘
+            │
+            ▼
+┌─────────────────────────────────────────────────────────┐
+│                    DATA LAYER                            │
+├─────────────────────────────────────────────────────────┤
+│  PostgreSQL      │  Redis       │  S3                   │
+│  - Users         │  - Sessions  │  - Music tracks       │
+│  - Transactions  │  - Leaderboards│- Profile images     │
+│  - Social graph  │  - Active games│- Track covers       │
+└─────────────────────────────────────────────────────────┘</code></pre>
+                </div>
+            </section>
+
+            <!-- Service Boundaries -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Service Boundaries (Modular Monolith)</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Service</th>
+                                <th>Responsibilities</th>
+                                <th>Key Entities</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>User Service</strong></td>
+                                <td>Registration, authentication, profiles, tiers</td>
+                                <td>User, Profile, Tier</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Klash Service</strong></td>
+                                <td>Matchmaking, game state, voting, tournaments</td>
+                                <td>Klash, KlashParticipation, Vote, Tournament</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wallet Service</strong></td>
+                                <td>Coin purchase, gifting, transactions, cash-out</td>
+                                <td>Wallet, Transaction</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Music Service</strong></td>
+                                <td>Track upload, streaming, playlists, library</td>
+                                <td>Track, Playlist, Genre</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Social Service</strong></td>
+                                <td>Following, messaging, feed, discovery</td>
+                                <td>Follow, Message, Post</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Cross-Cutting Concerns</h3>
+                    <ul>
+                        <li><strong>Authentication:</strong> JWT middleware (all services check token)</li>
+                        <li><strong>Logging:</strong> Centralized (Winston → CloudWatch / Datadog)</li>
+                        <li><strong>Error Handling:</strong> Unified error response format</li>
+                        <li><strong>Rate Limiting:</strong> Per-endpoint throttling (Express middleware)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Technology Stack -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Technology Stack</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Layer</th>
+                                <th>Technology</th>
+                                <th>Version</th>
+                                <th>Justification</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Backend API</strong></td>
+                                <td>Node.js + Express.js</td>
+                                <td>20 LTS + 4.x</td>
+                                <td>JavaScript full-stack; WebSocket support; fast development</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Database</strong></td>
+                                <td>PostgreSQL</td>
+                                <td>15+</td>
+                                <td>ACID-compliant; JSON support; horizontal scaling (Citus)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cache</strong></td>
+                                <td>Redis</td>
+                                <td>7+</td>
+                                <td>In-memory performance; pub/sub for WebSocket scaling</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Real-Time</strong></td>
+                                <td>Socket.io</td>
+                                <td>4.x</td>
+                                <td>Mature; room-based pub/sub; auto-fallback to polling</td>
+                            </tr>
+                            <tr>
+                                <td><strong>File Storage</strong></td>
+                                <td>AWS S3</td>
+                                <td>—</td>
+                                <td>Music files; CDN distribution; 99.99% uptime</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Frontend (Web)</strong></td>
+                                <td>React + TypeScript</td>
+                                <td>18+ / 5+</td>
+                                <td>Industry standard; type safety; large talent pool</td>
+                            </tr>
+                            <tr>
+                                <td><strong>ORM</strong></td>
+                                <td>Prisma</td>
+                                <td>5+</td>
+                                <td>Type-safe queries; migration management; excellent DX</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Payment</strong></td>
+                                <td>Stripe Connect</td>
+                                <td>—</td>
+                                <td>FCA-licensed; marketplace payouts; proven</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Development Tools</h3>
+                    <ul>
+                        <li><strong>API Documentation:</strong> OpenAPI 3.0 (Swagger UI)</li>
+                        <li><strong>Version Control:</strong> Git + GitHub</li>
+                        <li><strong>CI/CD:</strong> GitHub Actions</li>
+                        <li><strong>Testing:</strong> Jest (unit), Supertest (API), Cypress (E2E)</li>
+                        <li><strong>Monitoring:</strong> DataDog or CloudWatch</li>
+                        <li><strong>Error Tracking:</strong> Sentry</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Data Architecture -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Data Architecture</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Conceptual Data Model</h3>
+                    <p><strong>Two Subdomains:</strong></p>
+
+                    <h4 class="mt-3">1. Social / Gaming Core</h4>
+                    <ul>
+                        <li><code>User</code> (1:1 Wallet, M:N Klash via KlashParticipation, M:N Follow)</li>
+                        <li><code>Genre</code> (controlled vocabulary)</li>
+                        <li><code>Track</code> (belongs to User, belongs to Genre)</li>
+                        <li><code>Playlist</code> (belongs to User, M:N Track via PlaylistTrack)</li>
+                        <li><code>Klash</code> (M:N User via KlashParticipation, belongs to Genre, has many Vote)</li>
+                        <li><code>KlashParticipation</code> (associative entity: Klash ↔ User with role, track, outcome)</li>
+                        <li><code>Vote</code> (belongs to Klash, belongs to User, references KlashParticipation)</li>
+                        <li><code>Tournament</code> (has many Klash)</li>
+                    </ul>
+
+                    <h4 class="mt-3">2. Economy</h4>
+                    <ul>
+                        <li><code>Wallet</code> (belongs to User OR Klash, polymorphic)</li>
+                        <li><code>Transaction</code> (from_wallet_id → to_wallet_id, double-entry)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Key Modelling Decisions</h3>
+                    <ol>
+                        <li><strong>Tier is an attribute</strong> (not entity) — <code>User.tier ENUM('KLASHER', 'INDEPENDENT', 'SUPER')</code></li>
+                        <li><strong>Genre is an entity</strong> — referenced by both Track and Klash</li>
+                        <li><strong>KlashParticipation is associative</strong> — M:N with attributes (role, position, track, outcome)</li>
+                        <li><strong>Transaction is double-entry</strong> — two FKs to Wallet (from, to), all types in one table</li>
+                        <li><strong>Wallet.balance is stored-but-derived</strong> — updated atomically, recomputed daily for audit</li>
+                    </ol>
+
+                    <h3 class="mt-3">Core Schema (PostgreSQL)</h3>
+                    <pre><code>-- Users & Authentication
+CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  klasher_name VARCHAR(100) UNIQUE NOT NULL,
+  tier VARCHAR(20) NOT NULL DEFAULT 'KLASHER',
+  points_total INTEGER NOT NULL DEFAULT 0,
+  follower_count INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Genres
+CREATE TABLE genres (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(100) UNIQUE NOT NULL,
+  slug VARCHAR(100) UNIQUE NOT NULL
+);
+
+-- Tracks
+CREATE TABLE tracks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(255) NOT NULL,
+  artist_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  genre_id UUID REFERENCES genres(id),
+  file_url VARCHAR(500) NOT NULL,
+  duration_seconds INTEGER NOT NULL,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- Klashes
+CREATE TABLE klashes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  genre_id UUID REFERENCES genres(id) NOT NULL,
+  klash_type VARCHAR(20) NOT NULL,
+  snippet_duration INTEGER NOT NULL,
+  state VARCHAR(20) NOT NULL DEFAULT 'MATCHMAKING',
+  result_method VARCHAR(20),
+  winner_participation_id UUID,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);
+
+-- KlashParticipation (associative entity)
+CREATE TABLE klash_participations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  role VARCHAR(20) NOT NULL,
+  position INTEGER,
+  track_id UUID REFERENCES tracks(id),
+  outcome VARCHAR(20),
+  joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  UNIQUE(klash_id, user_id)
+);
+
+-- Votes
+CREATE TABLE votes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  voted_for_participation_id UUID REFERENCES klash_participations(id),
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  UNIQUE(klash_id, user_id)
+);
+
+-- Wallets (polymorphic)
+CREATE TABLE wallets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  owner_type VARCHAR(20) NOT NULL,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
+  balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  currency VARCHAR(3) NOT NULL DEFAULT 'GBP',
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  CONSTRAINT check_owner CHECK (
+    (owner_type = 'USER' AND user_id IS NOT NULL) OR
+    (owner_type = 'KLASH' AND klash_id IS NOT NULL)
+  )
+);
+
+-- Transactions (double-entry ledger)
+CREATE TABLE transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  type VARCHAR(50) NOT NULL,
+  from_wallet_id UUID REFERENCES wallets(id),
+  to_wallet_id UUID REFERENCES wallets(id),
+  amount DECIMAL(10,2) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+  metadata JSONB,
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+                </div>
+            </section>
+
+            <!-- API Design -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">API Design</h2>
+                </div>
+                <div class="card-body">
+                    <h3>API Structure (RESTful)</h3>
+                    <p><strong>Base URL:</strong> <code>https://api.klashout.com/v1</code><br>
+                    <strong>Authentication:</strong> <code>Authorization: Bearer &lt;JWT&gt;</code></p>
+
+                    <h3 class="mt-3">Core Endpoints</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Method</th>
+                                <th>Endpoint</th>
+                                <th>Purpose</th>
+                                <th>Auth</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="4"><strong>Authentication</strong></td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/auth/register</code></td>
+                                <td>Create account</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/auth/login</code></td>
+                                <td>Login, get JWT</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/auth/refresh</code></td>
+                                <td>Refresh access token</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><strong>Users</strong></td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/users/me</code></td>
+                                <td>Get current user profile</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>PATCH</td>
+                                <td><code>/users/me</code></td>
+                                <td>Update profile</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/users/:id</code></td>
+                                <td>Get public profile</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/users/:id/follow</code></td>
+                                <td>Follow user</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><strong>Klashes</strong></td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/klashes/matchmaking</code></td>
+                                <td>Enter matchmaking queue</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/klashes/:id</code></td>
+                                <td>Get klash details</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/klashes/:id/vote</code></td>
+                                <td>Vote for winner</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><strong>Wallet</strong></td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/wallet</code></td>
+                                <td>Get balance</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/wallet/top-up</code></td>
+                                <td>Purchase coins (Stripe payment intent)</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/wallet/cash-out</code></td>
+                                <td>Request cash-out</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/wallet/transactions</code></td>
+                                <td>Transaction history</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td colspan="4"><strong>Music</strong></td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/tracks</code></td>
+                                <td>Search/browse tracks</td>
+                                <td>No</td>
+                            </tr>
+                            <tr>
+                                <td>POST</td>
+                                <td><code>/tracks</code></td>
+                                <td>Upload track (Independent Klashers only)</td>
+                                <td>Yes</td>
+                            </tr>
+                            <tr>
+                                <td>GET</td>
+                                <td><code>/tracks/:id</code></td>
+                                <td>Get track details + streaming URL</td>
+                                <td>No</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">WebSocket Events</h3>
+                    <p><strong>Connection:</strong> <code>wss://api.klashout.com</code></p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Event</th>
+                                <th>Direction</th>
+                                <th>Purpose</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>join_klash</code></td>
+                                <td>Client → Server</td>
+                                <td>Join klash room</td>
+                            </tr>
+                            <tr>
+                                <td><code>state_change</code></td>
+                                <td>Server → Client</td>
+                                <td>Klash state updated</td>
+                            </tr>
+                            <tr>
+                                <td><code>vote_update</code></td>
+                                <td>Server → Client</td>
+                                <td>Vote count updated</td>
+                            </tr>
+                            <tr>
+                                <td><code>chat_message</code></td>
+                                <td>Bidirectional</td>
+                                <td>Chat during klash</td>
+                            </tr>
+                            <tr>
+                                <td><code>match_found</code></td>
+                                <td>Server → Client</td>
+                                <td>Matchmaking complete</td>
+                            </tr>
+                            <tr>
+                                <td><code>klash_result</code></td>
+                                <td>Server → Client</td>
+                                <td>Klash ended</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Security -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Security Architecture</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Authentication & Authorization</h3>
+                    <ul>
+                        <li><strong>Passwords:</strong> Hashed with bcrypt (cost factor 12)</li>
+                        <li><strong>JWT Access Tokens:</strong> 1-hour expiry, signed with RS256</li>
+                        <li><strong>Refresh Tokens:</strong> 7-day expiry, stored in DB (revocable)</li>
+                        <li><strong>Authorization:</strong> Role-based (tier determines permissions)</li>
+                    </ul>
+
+                    <h3 class="mt-3">API Security</h3>
+                    <ul>
+                        <li><strong>HTTPS Only:</strong> All traffic encrypted (TLS 1.2+)</li>
+                        <li><strong>Rate Limiting:</strong> 100 req/min per IP, 1000 req/min per authenticated user</li>
+                        <li><strong>CORS:</strong> Whitelist only KO domains</li>
+                        <li><strong>Input Validation:</strong> All endpoints validate with Joi/Zod schemas</li>
+                    </ul>
+
+                    <h3 class="mt-3">Financial Security</h3>
+                    <ul>
+                        <li><strong>ACID Transactions:</strong> All wallet updates wrapped in DB transactions</li>
+                        <li><strong>Idempotency:</strong> Payment webhooks use <code>idempotency_key</code> to prevent double-crediting</li>
+                        <li><strong>Daily Reconciliation:</strong> Batch job compares <code>Wallet.balance</code> vs SUM(transactions)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Data Protection (GDPR)</h3>
+                    <ul>
+                        <li><strong>Encryption at Rest:</strong> RDS encrypted</li>
+                        <li><strong>PII Handling:</strong> Email, payment details encrypted</li>
+                        <li><strong>Right to Deletion:</strong> <code>/users/me/delete</code> endpoint (cascades to all user data)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Performance & Scalability -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Performance & Scalability</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Performance Targets (NFRs)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Metric</th>
+                                <th>Target</th>
+                                <th>NFR</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>API Response Time (95th percentile)</td>
+                                <td>≤ 500ms</td>
+                                <td>NF01</td>
+                            </tr>
+                            <tr>
+                                <td>Real-Time Event Delivery</td>
+                                <td>≤ 200ms</td>
+                                <td>NF02</td>
+                            </tr>
+                            <tr>
+                                <td>Concurrent Users</td>
+                                <td>10,000</td>
+                                <td>NF03</td>
+                            </tr>
+                            <tr>
+                                <td>Uptime</td>
+                                <td>99.5%</td>
+                                <td>NF04</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Caching Strategy</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cache</th>
+                                <th>TTL</th>
+                                <th>Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>User profiles</td>
+                                <td>Redis</td>
+                                <td>5 min</td>
+                                <td>High read, low write</td>
+                            </tr>
+                            <tr>
+                                <td>Leaderboards</td>
+                                <td>Redis Sorted Sets</td>
+                                <td>1 min</td>
+                                <td>Real-time ranking</td>
+                            </tr>
+                            <tr>
+                                <td>Active klash state</td>
+                                <td>Redis</td>
+                                <td>10 sec</td>
+                                <td>Real-time game state</td>
+                            </tr>
+                            <tr>
+                                <td>Music file URLs</td>
+                                <td>CloudFront CDN</td>
+                                <td>24 hrs</td>
+                                <td>Static content</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Database Optimization</h3>
+                    <ul>
+                        <li><strong>Indexes:</strong> All foreign keys, <code>email</code> (unique), <code>klasher_name</code> (unique), <code>klash_id + user_id</code> (composite for votes)</li>
+                        <li><strong>Read Replicas:</strong> Separate read-heavy queries (leaderboards, browse) from write-heavy (transactions)</li>
+                        <li><strong>Connection Pooling:</strong> PgBouncer (max 100 connections)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Horizontal Scaling</h3>
+                    <ul>
+                        <li><strong>API Servers:</strong> Stateless, scale behind load balancer</li>
+                        <li><strong>WebSockets:</strong> Redis pub/sub adapter (Socket.io broadcasts via Redis)</li>
+                        <li><strong>Database:</strong> PostgreSQL read replicas (Phase 2), Citus sharding (Phase 3)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Deployment -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Deployment Architecture</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Phase 1 Architecture (Single Region)</h3>
+                    <pre><code>┌──────────────────────────────────────────────┐
+│          CLOUDFLARE CDN                       │
+│  - Static assets (React build, images)       │
+│  - Music file delivery (S3 proxy)            │
+└────────────┬─────────────────────────────────┘
+             │
+             ▼
+┌──────────────────────────────────────────────┐
+│       LOAD BALANCER (AWS ALB)                │
+│  - HTTPS termination                          │
+│  - Health checks                              │
+│  - Sticky sessions (for WebSockets)          │
+└────────────┬─────────────────────────────────┘
+             │
+     ┌───────┴───────┐
+     │               │
+     ▼               ▼
+┌─────────┐     ┌─────────┐
+│  API    │     │  API    │  (Horizontal scaling)
+│ Server  │     │ Server  │
+│  (EC2)  │     │  (EC2)  │
+└────┬────┘     └────┬────┘
+     │               │
+     └───────┬───────┘
+             │
+     ┌───────┴───────┬───────────┬───────────┐
+     │               │           │           │
+     ▼               ▼           ▼           ▼
+┌─────────┐    ┌─────────┐ ┌─────────┐ ┌─────────┐
+│   RDS   │    │  Redis  │ │   S3    │ │ Stripe  │
+│(Postgres│    │ (Cache) │ │ (Files) │ │  (API)  │
+└─────────┘    └─────────┘ └─────────┘ └─────────┘</code></pre>
+
+                    <h3 class="mt-3">Scaling Strategy</h3>
+                    <p><strong>Phase 1 (0-10K users):</strong></p>
+                    <ul>
+                        <li>Single RDS instance (PostgreSQL)</li>
+                        <li>2-4 API server instances (auto-scaling)</li>
+                        <li>Redis single instance (ElastiCache)</li>
+                    </ul>
+
+                    <p><strong>Phase 2 (10K-100K users):</strong></p>
+                    <ul>
+                        <li>RDS read replicas (separate read/write queries)</li>
+                        <li>Redis cluster (pub/sub for multi-server WebSockets)</li>
+                        <li>CDN for all static + music files</li>
+                    </ul>
+
+                    <p><strong>Phase 3 (100K+ users):</strong></p>
+                    <ul>
+                        <li>PostgreSQL sharding (by user_id or klash_id)</li>
+                        <li>Microservices split (wallet service separate)</li>
+                        <li>Multi-region deployment</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

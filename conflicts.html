@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conflict Register — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html" class="active">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Conflict Register</h1>
+            <p class="page-subtitle">Source Material Contradictions | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Document Purpose</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Status:</strong> Active — Requires Lincoln Review</p>
+                    <p>This register documents all contradictions identified across 15+ months of source materials. Each contradiction includes precise document references and proposed working assumptions.</p>
+
+                    <h3>Document Precedence Rule</h3>
+                    <ol>
+                        <li><strong>Direct answer from Lincoln</strong> — supersedes all documents</li>
+                        <li><strong>Newer document</strong> — supersedes older of same type</li>
+                        <li><strong>More specific document</strong> — supersedes general document</li>
+                    </ol>
+                </div>
+            </section>
+
+            <h2>Critical Contradictions (Blocking Phase 2)</h2>
+
+            <div class="collapsible active">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">▶</span>
+                        <span><strong>C01:</strong> FCA / Wallet Technology Approach 🔴 HIGHEST RISK</span>
+                    </div>
+                    <span class="badge badge-blocked">BLOCKING</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <div class="alert alert-critical">
+                            <div class="alert-title">⚠️ Regulatory Stakes</div>
+                            <p>This contradiction affects FCA compliance, entire wallet design, and technology stack.</p>
+                        </div>
+
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Statement</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>BRD</strong></td>
+                                    <td>"The coin should be based around <strong>Ethereum system</strong>. It will be a 3rd Party API. <strong>KO will create its own blockchain</strong>."</td>
+                                    <td>BRD 3 Jan 2026, Page 5</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Wallet & Coin UX</strong></td>
+                                    <td>"The coin is a <strong>1 to 1 fiat rate</strong> (currency) which is backed by the users at phase 1"</td>
+                                    <td>Wallet & Coin UX doc, Line 7</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 class="mt-3">Why This Is a Contradiction</h4>
+                        <p>Ethereum/blockchain = cryptocurrency (volatile, decentralized, unregulated in traditional sense).<br>
+                        1:1 fiat-backed = e-money (stable, centralized, FCA-regulated under Electronic Money Regulations 2011).</p>
+
+                        <h4>Implications</h4>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Approach</th>
+                                    <th>Regulatory Path</th>
+                                    <th>User Experience</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Blockchain/Ethereum</strong></td>
+                                    <td>Unclear UK crypto regulation</td>
+                                    <td>Users need ETH for gas fees, value fluctuates</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>1:1 Fiat-backed</strong></td>
+                                    <td>FCA e-money registration OR partner</td>
+                                    <td>Users purchase with £/€/$, stable value</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="alert alert-info mt-3">
+                            <div class="alert-title">Working Assumption</div>
+                            <p>Internal double-entry ledger with 1:1 fiat backing, using third-party licensed payment provider (Stripe/Mangopay) for FCA compliance.</p>
+                            <p><strong>Rationale:</strong> Wallet & Coin UX doc is more recent and describes fiat-like transactions (card top-up, bank cash-out).</p>
+                        </div>
+
+                        <p class="mt-3"><strong>Resolution Required:</strong> Confirm with Lincoln + legal advisor before Phase 2.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">▶</span>
+                        <span><strong>C02:</strong> Winner Determination Logic 🟡</span>
+                    </div>
+                    <span class="badge badge-should-have">HIGH PRIORITY</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Winner Method</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>BRD</strong></td>
+                                    <td>Gifts received OR likes OR comments OR "KO algorithm for smaller klashes"</td>
+                                    <td>BRD Page 4, "Ending of a game"</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gaming Mechanic</strong></td>
+                                    <td>Audience vote — simple vote tally (mechanism TBC)</td>
+                                    <td>Gaming Mechanic doc, Step 9</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 class="mt-3">Design Impact</h4>
+                        <ul>
+                            <li><strong>Simple vote:</strong> Lightweight COUNT query</li>
+                            <li><strong>Weighted scoring:</strong> Complex aggregation + real-time calculation</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-3">
+                            <div class="alert-title">Working Assumption</div>
+                            <p>Primary: Audience vote (simple tally)<br>
+                            Fallback: Algorithm for klashes with insufficient participation<br>
+                            <code>Klash.resultMethod</code> records which was used</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">▶</span>
+                        <span><strong>C03:</strong> Web-First Sequencing (Buried Decision) 🌐</span>
+                    </div>
+                    <span class="badge badge-completed">RESOLVED</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <div class="alert alert-warning">
+                            <div class="alert-title">⚠️ Most Consequential Architectural Decision</div>
+                            <p>This appeared ONLY in meeting minutes, yet mandates API-first architecture for entire project.</p>
+                        </div>
+
+                        <blockquote>
+                            <p>"App and platform will be have to be sequenced. Rohit will work on the <strong>website</strong>. An App Developer needs to be hired for the App"</p>
+                            <p>"Two types of Users; <strong>website – connoisseurs, artists and DJ's</strong> (always use their laptops). <strong>App – everyday users and spectators</strong>."</p>
+                            <cite>— Meeting Minutes, 5 March 2026</cite>
+                        </blockquote>
+
+                        <h4>Architectural Mandate</h4>
+                        <ul>
+                            <li>✅ <strong>API-first, client-agnostic backend</strong> — all business logic server-side</li>
+                            <li>✅ Web and mobile are thin presentation layers consuming same API</li>
+                            <li>✅ App developer hired later can build on existing backend without changes</li>
+                        </ul>
+
+                        <p><strong>Status:</strong> Not a contradiction — documenting here because it was nearly missed and is critical to architecture.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <div class="collapsible-title">
+                        <span class="collapsible-icon">▶</span>
+                        <span><strong>C04:</strong> Real-Time Concurrency Ceiling 🔴</span>
+                    </div>
+                    <span class="badge badge-blocked">BLOCKING</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Source</th>
+                                    <th>Participant Limit</th>
+                                    <th>Reference</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>BRD</strong></td>
+                                    <td>"two players to <strong>an infinite number of players</strong>"</td>
+                                    <td>BRD Page 4, "Klashes"</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Gaming Mechanic</strong></td>
+                                    <td>"<strong>unlimited number of participants</strong>"</td>
+                                    <td>Line 166, Super Klasher definition</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>BRD (Multiverse)</strong></td>
+                                    <td>"For a forum of <strong>100,000 klashers</strong>, split into different simulations"</td>
+                                    <td>BRD Page 7, "Time sequence requirements"</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 class="mt-3">Engineering Reality</h4>
+                        <p>"Unlimited" is not buildable. Every system has a ceiling determined by:</p>
+                        <ul>
+                            <li>WebSocket connection limits (~10K per server instance)</li>
+                            <li>Real-time broadcast latency (O(N) fan-out)</li>
+                            <li>Audio synchronization tolerance</li>
+                        </ul>
+
+                        <div class="alert alert-info mt-3">
+                            <div class="alert-title">Working Assumption</div>
+                            <ul>
+                                <li><strong>Standard Klash:</strong> 1,000 max participants (single instance)</li>
+                                <li><strong>Super Klash:</strong> 10,000 max participants (load balanced)</li>
+                                <li><strong>Mega Events:</strong> 100K+ via "multiverse" sharding (Phase 3+)</li>
+                            </ul>
+                        </div>
+
+                        <p><strong>Resolution Required:</strong> Confirm realistic Phase 1 ceiling with Lincoln.</p>
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="mt-4">Summary Table</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Contradiction</th>
+                        <th>Category</th>
+                        <th>Impact</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>C01</strong></td>
+                        <td>FCA / Wallet Approach</td>
+                        <td>Financial/Legal</td>
+                        <td>🔴 BLOCKING</td>
+                        <td><span class="badge badge-blocked">Requires Lincoln + legal</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>C02</strong></td>
+                        <td>Winner Determination Logic</td>
+                        <td>Game Mechanics</td>
+                        <td>🟡 Affects design</td>
+                        <td><span class="badge badge-should-have">Requires Lincoln</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>C03</strong></td>
+                        <td>Web-First Sequencing</td>
+                        <td>Architecture</td>
+                        <td>✅ Documented</td>
+                        <td><span class="badge badge-completed">Resolved</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>C04</strong></td>
+                        <td>Concurrency Ceiling</td>
+                        <td>Scalability</td>
+                        <td>🔴 BLOCKING</td>
+                        <td><span class="badge badge-blocked">Requires Lincoln</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <section class="card mt-4">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Next Steps</h2>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Schedule stakeholder alignment meeting with Lincoln</li>
+                        <li>Use <a href="questions-for-lincoln.html">Questions for Lincoln</a> as meeting agenda</li>
+                        <li>Obtain legal advice on C01 (FCA/e-money)</li>
+                        <li>Update SDD with Lincoln's decisions</li>
+                        <li>Close this register when all items are resolved</li>
+                    </ol>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

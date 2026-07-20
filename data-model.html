@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Model & ERD — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html" class="active">Data Model & ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Data Model & Entity Relationship Diagram</h1>
+            <p class="page-subtitle">Database Schema & Class Structure | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Introduction -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Document Purpose</h2>
+                </div>
+                <div class="card-body">
+                    <p>This document provides the complete database schema for KlashOut, including entity definitions, relationships, and implementation guidance for Phase 2.</p>
+
+                    <h3>Two Subdomains</h3>
+                    <p>The data model is organized into two logical subdomains:</p>
+                    <ul>
+                        <li><strong>Social / Gaming Core:</strong> Users, music, klashes, tournaments, social graph</li>
+                        <li><strong>Economy:</strong> Wallet, transactions (double-entry ledger)</li>
+                    </ul>
+
+                    <p class="alert alert-warning mt-3"><strong>Note:</strong> This schema is based on the 1:1 fiat-backed wallet assumption. If blockchain approach is confirmed (C01), wallet entities will change significantly.</p>
+                </div>
+            </section>
+
+            <!-- High-Level ERD -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Entity Relationship Diagram (High-Level)</h2>
+                </div>
+                <div class="card-body">
+                    <pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                     SOCIAL / GAMING CORE                         │
+└─────────────────────────────────────────────────────────────────┘
+
+                    ┌──────────────┐
+                    │    User      │ (Central entity)
+                    │──────────────│
+                    │ id           │
+                    │ email        │
+                    │ klasher_name │
+                    │ tier         │◄─────── ENUM: KLASHER, INDEPENDENT, SUPER
+                    │ points_total │
+                    └──────┬───────┘
+                           │
+         ┌─────────────────┼─────────────────┐
+         │                 │                 │
+         │                 │                 │
+    ┌────▼────┐       ┌────▼────┐      ┌────▼─────┐
+    │ Track   │       │Playlist │      │  Follow  │ (M:N self-join)
+    │─────────│       │─────────│      │──────────│
+    │ id      │       │ id      │      │ user_id  │
+    │ title   │       │ name    │      │ follows  │
+    │ artist  │───┐   │ user_id │      └──────────┘
+    │ genre_id│   │   └────┬────┘
+    └────┬────┘   │        │
+         │        │        │ M:N
+         │        │   ┌────▼────────┐
+         │        │   │PlaylistTrack│ (junction)
+         │        │   │─────────────│
+         │        │   │ playlist_id │
+         │        │   │ track_id    │
+         │        │   │ position    │
+         │        │   └─────────────┘
+         │        │
+         │        │
+    ┌────▼────┐  │
+    │  Genre  │◄─┘
+    │─────────│
+    │ id      │
+    │ name    │
+    │ slug    │
+    └────┬────┘
+         │
+         │ referenced by
+         │
+    ┌────▼──────────┐
+    │    Klash      │ (Core game entity)
+    │───────────────│
+    │ id            │
+    │ genre_id      │
+    │ klash_type    │◄─── ENUM: HEAD_TO_HEAD, GROUP, SUPER
+    │ state         │◄─── State machine (10 states)
+    │ result_method │◄─── 'VOTE' or 'ALGORITHM' ⚠️ UNAPPROVED (C02)
+    │ winner_id     │
+    └───────┬───────┘
+            │
+            │ M:N via
+            │
+    ┌───────▼──────────────┐
+    │ KlashParticipation   │ (Associative entity with attributes)
+    │──────────────────────│
+    │ id                   │
+    │ klash_id             │
+    │ user_id              │
+    │ role                 │◄─── 'KLASHER' or 'SPECTATOR'
+    │ position             │◄─── 1 or 2 (for klashers)
+    │ track_id             │
+    │ outcome              │◄─── 'WIN', 'LOSS', 'DRAW', NULL
+    └──────────┬───────────┘
+               │
+               │ referenced by
+               │
+    ┌──────────▼───────┐
+    │      Vote        │
+    │──────────────────│
+    │ id               │
+    │ klash_id         │
+    │ user_id          │◄─── voter (spectator)
+    │ voted_for_part_id│◄─── KlashParticipation.id
+    └──────────────────┘
+
+
+    ┌────────────┐
+    │ Tournament │
+    │────────────│
+    │ id         │
+    │ format     │◄─── 'ROUND_ROBIN', 'SWISS', 'ELIMINATION', 'FFA'
+    │ genre_id   │
+    └─────┬──────┘
+          │
+          │ has many
+          │
+    ┌─────▼──────┐
+    │ Klash      │ (tournament_id FK)
+    └────────────┘
+
+
+┌─────────────────────────────────────────────────────────────────┐
+│                         ECONOMY                                  │
+└─────────────────────────────────────────────────────────────────┘
+
+    ┌──────────────┐                    ┌──────────────┐
+    │    User      │                    │    Klash     │
+    └──────┬───────┘                    └──────┬───────┘
+           │                                   │
+           │ 1:1                               │ 1:1
+           │                                   │
+    ┌──────▼───────────────────────────────────▼──────┐
+    │              Wallet (Polymorphic)                │
+    │──────────────────────────────────────────────────│
+    │ id                                               │
+    │ owner_type         ◄─── 'USER' or 'KLASH'       │
+    │ user_id            ◄─── nullable                 │
+    │ klash_id           ◄─── nullable                 │
+    │ balance            ◄─── stored-but-derived       │
+    │ currency           ◄─── 'GBP', 'EUR', 'USD'      │
+    └──────┬───────────────────┬───────────────────────┘
+           │                   │
+           │                   │
+           │    Double-entry   │
+           │                   │
+    ┌──────▼───────────────────▼──────┐
+    │        Transaction               │
+    │──────────────────────────────────│
+    │ id                               │
+    │ type              ◄─── discriminator (TOP_UP, GIFT, etc.)
+    │ from_wallet_id    ◄─── FK Wallet (debit)
+    │ to_wallet_id      ◄─── FK Wallet (credit)
+    │ amount                           │
+    │ status            ◄─── PENDING, COMPLETED, FAILED
+    │ klash_id          ◄─── nullable (context)
+    │ track_id          ◄─── nullable (context)
+    │ metadata          ◄─── JSONB (flexible data)
+    └──────────────────────────────────┘</code></pre>
+                </div>
+            </section>
+
+            <!-- Relationship Summary -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Relationship Summary</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>From Entity</th>
+                                <th>Relationship</th>
+                                <th>To Entity</th>
+                                <th>Cardinality</th>
+                                <th>Implementation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>User</strong></td>
+                                <td>uploads</td>
+                                <td>Track</td>
+                                <td>1:N</td>
+                                <td><code>Track.artist_user_id → User.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>User</strong></td>
+                                <td>creates</td>
+                                <td>Playlist</td>
+                                <td>1:N</td>
+                                <td><code>Playlist.user_id → User.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>User</strong></td>
+                                <td>follows</td>
+                                <td>User</td>
+                                <td>M:N</td>
+                                <td>Junction: <code>Follow (follower_id, following_id)</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>User</strong></td>
+                                <td>has</td>
+                                <td>Wallet</td>
+                                <td>1:1</td>
+                                <td><code>Wallet.user_id → User.id</code> (polymorphic)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>User</strong></td>
+                                <td>participates in</td>
+                                <td>Klash</td>
+                                <td>M:N</td>
+                                <td>Associative: <code>KlashParticipation</code> (has attributes)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Genre</strong></td>
+                                <td>categorizes</td>
+                                <td>Track</td>
+                                <td>1:N</td>
+                                <td><code>Track.genre_id → Genre.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Genre</strong></td>
+                                <td>categorizes</td>
+                                <td>Klash</td>
+                                <td>1:N</td>
+                                <td><code>Klash.genre_id → Genre.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Playlist</strong></td>
+                                <td>contains</td>
+                                <td>Track</td>
+                                <td>M:N</td>
+                                <td>Junction: <code>PlaylistTrack (playlist_id, track_id, position)</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Klash</strong></td>
+                                <td>receives</td>
+                                <td>Vote</td>
+                                <td>1:N</td>
+                                <td><code>Vote.klash_id → Klash.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Klash</strong></td>
+                                <td>may have</td>
+                                <td>Wallet</td>
+                                <td>1:1</td>
+                                <td><code>Wallet.klash_id → Klash.id</code> (pot escrow)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>KlashParticipation</strong></td>
+                                <td>selected</td>
+                                <td>Track</td>
+                                <td>N:1</td>
+                                <td><code>KlashParticipation.track_id → Track.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Vote</strong></td>
+                                <td>for</td>
+                                <td>KlashParticipation</td>
+                                <td>N:1</td>
+                                <td><code>Vote.voted_for_participation_id → KlashParticipation.id</code></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tournament</strong></td>
+                                <td>contains</td>
+                                <td>Klash</td>
+                                <td>1:N</td>
+                                <td><code>Klash.tournament_id → Tournament.id</code> (nullable)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Wallet</strong></td>
+                                <td>debited/credited via</td>
+                                <td>Transaction</td>
+                                <td>1:N</td>
+                                <td><code>Transaction.from_wallet_id</code>, <code>Transaction.to_wallet_id</code></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Complete Schema -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Complete PostgreSQL Schema</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Core Entities</h3>
+
+                    <h4 class="mt-3">users</h4>
+                    <pre><code>CREATE TABLE users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  klasher_name VARCHAR(100) UNIQUE NOT NULL,
+
+  -- Tier: KLASHER, INDEPENDENT, SUPER (stored as attribute, not FK)
+  tier VARCHAR(20) NOT NULL DEFAULT 'KLASHER',
+
+  -- Profile
+  bio TEXT,
+  profile_image_url VARCHAR(500),
+
+  -- Aggregated stats (derived but stored for performance)
+  points_total INTEGER NOT NULL DEFAULT 0,
+  follower_count INTEGER NOT NULL DEFAULT 0,
+  klash_count INTEGER NOT NULL DEFAULT 0,
+  win_count INTEGER NOT NULL DEFAULT 0,
+
+  -- Privacy
+  profile_visibility VARCHAR(20) NOT NULL DEFAULT 'PUBLIC',
+
+  -- Timestamps
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  last_login_at TIMESTAMP,
+
+  -- Indexes
+  INDEX idx_users_email (email),
+  INDEX idx_users_klasher_name (klasher_name),
+  INDEX idx_users_tier (tier)
+);</code></pre>
+
+                    <h4 class="mt-3">genres</h4>
+                    <pre><code>CREATE TABLE genres (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(100) UNIQUE NOT NULL,
+  slug VARCHAR(100) UNIQUE NOT NULL,
+  description TEXT,
+
+  -- Seeded at initialization (controlled vocabulary)
+  -- Reggae, Metal, House, Punk, Soul, Rock, R&B, Indie, Jazz,
+  -- Hip Hop, International, Classical, Pop, British underground
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW()
+);</code></pre>
+
+                    <h4 class="mt-3">tracks</h4>
+                    <pre><code>CREATE TABLE tracks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(255) NOT NULL,
+  artist_user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  genre_id UUID REFERENCES genres(id),
+
+  -- File storage (S3)
+  file_url VARCHAR(500) NOT NULL,
+  cover_image_url VARCHAR(500),
+  duration_seconds INTEGER NOT NULL,
+  file_size_bytes BIGINT NOT NULL,
+
+  -- Snippets (pre-generated at upload)
+  snippet_30s_url VARCHAR(500),
+  snippet_60s_url VARCHAR(500),
+  snippet_90s_url VARCHAR(500),
+
+  -- Rights verification
+  rights_verified BOOLEAN NOT NULL DEFAULT FALSE,
+
+  -- Stats
+  play_count INTEGER NOT NULL DEFAULT 0,
+  download_count INTEGER NOT NULL DEFAULT 0,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  INDEX idx_tracks_artist (artist_user_id),
+  INDEX idx_tracks_genre (genre_id),
+  INDEX idx_tracks_created (created_at DESC)
+);</code></pre>
+
+                    <h4 class="mt-3">playlists</h4>
+                    <pre><code>CREATE TABLE playlists (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+
+  -- Playlist types: CASUAL, KLASH_PLAYLIST, SHARED
+  playlist_type VARCHAR(20) NOT NULL DEFAULT 'CASUAL',
+
+  -- Privacy
+  is_public BOOLEAN NOT NULL DEFAULT FALSE,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  INDEX idx_playlists_user (user_id)
+);</code></pre>
+
+                    <h4 class="mt-3">playlist_tracks</h4>
+                    <pre><code>CREATE TABLE playlist_tracks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  playlist_id UUID REFERENCES playlists(id) ON DELETE CASCADE,
+  track_id UUID REFERENCES tracks(id) ON DELETE CASCADE,
+
+  -- Order within playlist (1-indexed)
+  position INTEGER NOT NULL,
+
+  added_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  UNIQUE(playlist_id, track_id),
+  INDEX idx_playlist_tracks_playlist (playlist_id, position)
+);</code></pre>
+
+                    <h4 class="mt-3">klashes</h4>
+                    <pre><code>CREATE TABLE klashes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  genre_id UUID REFERENCES genres(id) NOT NULL,
+
+  -- Klash type: HEAD_TO_HEAD, DIRECT_CHALLENGE, GROUP, SUPER
+  klash_type VARCHAR(20) NOT NULL,
+
+  -- Snippet duration: 30, 60, or 90
+  snippet_duration INTEGER NOT NULL,
+
+  -- State machine: MATCHMAKING, READY, COUNTDOWN, PLAYING_1,
+  -- DECISION_WINDOW, PLAYING_2, VOTING, CALCULATING, RESULT, COMPLETED
+  state VARCHAR(20) NOT NULL DEFAULT 'MATCHMAKING',
+
+  -- Result determination ⚠️ UNAPPROVED (C02)
+  -- Working assumption: 'VOTE' (primary) or 'ALGORITHM' (fallback)
+  result_method VARCHAR(20),
+
+  -- Winner (references KlashParticipation)
+  winner_participation_id UUID,
+
+  -- Tournament context (nullable)
+  tournament_id UUID REFERENCES tournaments(id),
+
+  -- Super Klash specifics
+  entry_fee DECIMAL(10,2),
+  pot_total DECIMAL(10,2),
+  host_fee_percentage DECIMAL(5,2),
+
+  -- Timestamps
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  started_at TIMESTAMP,
+  ended_at TIMESTAMP,
+
+  INDEX idx_klashes_genre (genre_id),
+  INDEX idx_klashes_state (state),
+  INDEX idx_klashes_created (created_at DESC)
+);</code></pre>
+
+                    <h4 class="mt-3">klash_participations</h4>
+                    <pre><code>CREATE TABLE klash_participations (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+
+  -- Role: KLASHER or SPECTATOR
+  role VARCHAR(20) NOT NULL,
+
+  -- Position: 1 or 2 (for klashers in HEAD_TO_HEAD)
+  -- NULL for spectators or GROUP/SUPER klashes
+  position INTEGER,
+
+  -- Selected track (NULL for spectators)
+  track_id UUID REFERENCES tracks(id),
+
+  -- Outcome: WIN, LOSS, DRAW, NULL (NULL for spectators or ongoing)
+  outcome VARCHAR(20),
+
+  -- Decision window choice (stick = true, switch = false)
+  decision_stick BOOLEAN,
+
+  joined_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  UNIQUE(klash_id, user_id),
+  INDEX idx_participation_klash (klash_id),
+  INDEX idx_participation_user (user_id)
+);</code></pre>
+
+                    <h4 class="mt-3">votes</h4>
+                    <pre><code>CREATE TABLE votes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+
+  -- Which KlashParticipation did they vote for?
+  voted_for_participation_id UUID REFERENCES klash_participations(id),
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  -- One vote per user per klash
+  UNIQUE(klash_id, user_id),
+  INDEX idx_votes_klash (klash_id)
+);</code></pre>
+
+                    <h4 class="mt-3">tournaments</h4>
+                    <pre><code>CREATE TABLE tournaments (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name VARCHAR(255) NOT NULL,
+  genre_id UUID REFERENCES genres(id),
+
+  -- Format: ROUND_ROBIN, SWISS, ELIMINATION, FFA
+  format VARCHAR(20) NOT NULL,
+
+  -- Status: REGISTRATION, IN_PROGRESS, COMPLETED
+  status VARCHAR(20) NOT NULL DEFAULT 'REGISTRATION',
+
+  -- Organizer
+  organizer_user_id UUID REFERENCES users(id),
+
+  -- Entry
+  max_participants INTEGER,
+  entry_fee DECIMAL(10,2),
+
+  -- Timestamps
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  starts_at TIMESTAMP,
+  ends_at TIMESTAMP,
+
+  INDEX idx_tournaments_genre (genre_id),
+  INDEX idx_tournaments_status (status)
+);</code></pre>
+
+                    <h4 class="mt-3">follows</h4>
+                    <pre><code>CREATE TABLE follows (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  follower_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  following_id UUID REFERENCES users(id) ON DELETE CASCADE,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  UNIQUE(follower_id, following_id),
+  INDEX idx_follows_follower (follower_id),
+  INDEX idx_follows_following (following_id),
+
+  -- Prevent self-follow
+  CONSTRAINT no_self_follow CHECK (follower_id != following_id)
+);</code></pre>
+
+                    <h4 class="mt-3">messages</h4>
+                    <pre><code>CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sender_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  recipient_id UUID REFERENCES users(id) ON DELETE CASCADE,
+
+  content TEXT NOT NULL,
+
+  -- Read status
+  is_read BOOLEAN NOT NULL DEFAULT FALSE,
+  read_at TIMESTAMP,
+
+  sent_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  INDEX idx_messages_recipient (recipient_id, sent_at DESC),
+  INDEX idx_messages_sender (sender_id)
+);</code></pre>
+
+                    <h3 class="mt-3">Economy Entities</h3>
+
+                    <h4 class="mt-3">wallets</h4>
+                    <pre><code>CREATE TABLE wallets (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Polymorphic: belongs to User OR Klash
+  owner_type VARCHAR(20) NOT NULL, -- 'USER' or 'KLASH'
+  user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+  klash_id UUID REFERENCES klashes(id) ON DELETE CASCADE,
+
+  -- Balance (stored-but-derived for performance)
+  -- Recomputed daily from SUM(transactions) for audit
+  balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+
+  currency VARCHAR(3) NOT NULL DEFAULT 'GBP',
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  -- Polymorphic constraint: exactly one owner
+  CONSTRAINT check_owner CHECK (
+    (owner_type = 'USER' AND user_id IS NOT NULL AND klash_id IS NULL) OR
+    (owner_type = 'KLASH' AND klash_id IS NOT NULL AND user_id IS NULL)
+  ),
+
+  INDEX idx_wallets_user (user_id),
+  INDEX idx_wallets_klash (klash_id)
+);</code></pre>
+
+                    <h4 class="mt-3">transactions</h4>
+                    <pre><code>CREATE TABLE transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+
+  -- Transaction type (discriminator)
+  -- TOP_UP, GIFT, MUSIC_PURCHASE, KLASH_ENTRY, KLASH_WINNINGS,
+  -- HOST_FEE, GO_LIVE, NUDGE_PLAY, CASH_OUT
+  type VARCHAR(50) NOT NULL,
+
+  -- Double-entry: from → to
+  from_wallet_id UUID REFERENCES wallets(id),
+  to_wallet_id UUID REFERENCES wallets(id),
+
+  amount DECIMAL(10,2) NOT NULL,
+
+  -- Status: PENDING, COMPLETED, FAILED, REVERSED
+  status VARCHAR(20) NOT NULL DEFAULT 'PENDING',
+
+  -- Context (nullable, depends on type)
+  klash_id UUID REFERENCES klashes(id),
+  track_id UUID REFERENCES tracks(id),
+
+  -- Flexible metadata (JSONB)
+  -- Example: {"stripe_payment_intent_id": "pi_xxx", "payout_method": "bank"}
+  metadata JSONB,
+
+  -- Stripe idempotency key (prevent double-crediting)
+  idempotency_key VARCHAR(255) UNIQUE,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+
+  -- At least one wallet must be specified
+  CONSTRAINT check_from_or_to CHECK (
+    from_wallet_id IS NOT NULL OR to_wallet_id IS NOT NULL
+  ),
+
+  INDEX idx_transactions_from_wallet (from_wallet_id, created_at DESC),
+  INDEX idx_transactions_to_wallet (to_wallet_id, created_at DESC),
+  INDEX idx_transactions_type (type),
+  INDEX idx_transactions_status (status)
+);</code></pre>
+                </div>
+            </section>
+
+            <!-- Key Modelling Decisions -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Key Modelling Decisions</h2>
+                </div>
+                <div class="card-body">
+                    <h3>1. Tier as Attribute (Not Entity)</h3>
+                    <p><strong>Decision:</strong> <code>User.tier</code> is a VARCHAR ENUM, not a foreign key to a Tiers table.</p>
+                    <p><strong>Rationale:</strong> Only 3 fixed values (KLASHER, INDEPENDENT, SUPER) with no data of their own. No need for entity.</p>
+                    <p><strong>Impact:</strong> Tier permissions checked via <code>WHERE tier = 'INDEPENDENT'</code> in queries.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">2. Genre as Entity (Promoted)</h3>
+                    <p><strong>Decision:</strong> Genre is a full entity, not an attribute.</p>
+                    <p><strong>Rationale:</strong> Referenced by <strong>both</strong> Track and Klash. Controlled vocabulary seeded at initialization.</p>
+                    <p><strong>Impact:</strong> Genre list is centrally managed. Changes propagate to all tracks/klashes.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">3. KlashParticipation as Associative Entity</h3>
+                    <p><strong>Decision:</strong> User ↔ Klash M:N relationship is <strong>reified</strong> (has its own attributes).</p>
+                    <p><strong>Attributes:</strong> <code>role</code>, <code>position</code>, <code>track_id</code>, <code>outcome</code>, <code>decision_stick</code></p>
+                    <p><strong>Rationale:</strong> The relationship itself carries data. Contrast with <code>Follow</code> (pure junction — no attributes).</p>
+                    <p><strong>Impact:</strong> Vote references KlashParticipation, not User directly. Winner is identified by <code>winner_participation_id</code>.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">4. Transaction as Double-Entry Ledger</h3>
+                    <p><strong>Decision:</strong> Single Transaction table with <strong>two FKs</strong> to Wallet (<code>from_wallet_id</code>, <code>to_wallet_id</code>).</p>
+                    <p><strong>Rationale:</strong> Ledger is balanced by construction. Every debit has a credit. Satisfies NF06 (ACID, zero unbalanced transactions).</p>
+                    <p><strong>Impact:</strong> All transaction types (top-up, gift, purchase, etc.) in one table. Discriminated by <code>type</code> field.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">5. Wallet.balance as Stored-But-Derived</h3>
+                    <p><strong>Decision:</strong> Balance is <strong>stored</strong> in Wallet table but <strong>recomputable</strong> from SUM(transactions).</p>
+                    <p><strong>Rationale:</strong> Performance (O(1) lookup) vs consistency trade-off.</p>
+                    <p><strong>Implementation:</strong></p>
+                    <ul>
+                        <li>Update balance <strong>atomically</strong> in same transaction that inserts Transaction record</li>
+                        <li>Daily reconciliation job: <code>SELECT SUM(amount) FROM transactions WHERE to_wallet_id = ? GROUP BY to_wallet_id</code></li>
+                        <li>Compare stored balance vs computed balance, alert on drift</li>
+                    </ul>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">6. Super Klash Pot as Escrow Wallet</h3>
+                    <p><strong>Decision:</strong> Klash pot is a <code>Wallet</code> where <code>owner_type = 'KLASH'</code>.</p>
+                    <p><strong>Rationale:</strong> Reuses double-entry machinery. Entry fees flow: User wallet → Klash wallet. Winnings flow: Klash wallet → Winner wallets.</p>
+                    <p><strong>Impact:</strong> Wallet entity is polymorphic (belongs to User OR Klash, enforced by CHECK constraint).</p>
+                </div>
+            </section>
+
+            <!-- Unapproved Elements -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">⚠️ Unapproved / Uncertain Elements</h2>
+                </div>
+                <div class="card-body">
+                    <h3>1. Klash.result_method</h3>
+                    <p><span class="badge badge-blocked">C02 UNRESOLVED</span></p>
+                    <p><strong>Issue:</strong> BRD describes winner as "gifts + likes + comments + KO algorithm". Gaming Mechanic doc describes simple vote tally.</p>
+                    <p><strong>Working Assumption:</strong> <code>result_method</code> ENUM: 'VOTE' (primary) or 'ALGORITHM' (fallback if low participation).</p>
+                    <p><strong>Schema Impact:</strong> If weighted scoring is confirmed, need additional tables/columns for gifts, likes, comments.</p>
+                    <p><strong>See:</strong> <a href="questions-for-lincoln.html">Q2.1</a>, <a href="conflicts.html">C02</a></p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">2. Nudge Play Mechanism</h3>
+                    <p><span class="badge badge-blocked">UNDEFINED</span></p>
+                    <p><strong>Issue:</strong> What does "nudge" actually do? Cannot design schema without knowing mechanic.</p>
+                    <p><strong>Possible Schemas:</strong></p>
+                    <ul>
+                        <li>If nudge = interrupt audio: <code>klash_participations.nudged_at TIMESTAMP</code></li>
+                        <li>If nudge = 3-use tactical: <code>CREATE TABLE nudge_uses (...)</code></li>
+                        <li>If nudge = join ongoing klash: Extend KlashParticipation logic</li>
+                    </ul>
+                    <p><strong>See:</strong> <a href="questions-for-lincoln.html">Q2.2</a>, <a href="epic-hierarchy.html">Epic 10</a></p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">3. Wallet Technology (Blockchain vs Fiat)</h3>
+                    <p><span class="badge badge-blocked">C01 BLOCKING</span></p>
+                    <p><strong>Issue:</strong> BRD says Ethereum/blockchain. Wallet UX doc says 1:1 fiat-backed.</p>
+                    <p><strong>Schema Impact:</strong> If blockchain confirmed, replace Wallet/Transaction tables with:
+                        <ul>
+                            <li><code>blockchain_addresses</code> (user_id, wallet_address, private_key_encrypted)</li>
+                            <li><code>smart_contract_events</code> (transaction_hash, event_type, ...)</li>
+                            <li>No balance stored (queried from blockchain)</li>
+                        </ul>
+                    </p>
+                    <p><strong>Current Schema:</strong> Based on fiat-backed assumption (internal ledger, Stripe integration).</p>
+                    <p><strong>See:</strong> <a href="conflicts.html">C01</a>, <a href="questions-for-lincoln.html">Q1.1</a></p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">4. Undefined Terms</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Term</th>
+                                <th>Mentioned In</th>
+                                <th>Schema Impact</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>"BK"</strong></td>
+                                <td>Gaming doc (Forums)</td>
+                                <td>Unknown — might be entity, attribute, or typo</td>
+                            </tr>
+                            <tr>
+                                <td><strong>"amp"</strong></td>
+                                <td>BRD (Profile page)</td>
+                                <td>Unknown — possibly User.amplification_count?</td>
+                            </tr>
+                            <tr>
+                                <td><strong>"KO Prizes"</strong></td>
+                                <td>Gaming doc (truncated)</td>
+                                <td>Unknown — might need prizes table</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p><strong>See:</strong> <a href="questions-for-lincoln.html">Q6.1</a></p>
+                </div>
+            </section>
+
+            <!-- Implementation Guidance -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Implementation Guidance (ORM / Class Structure)</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Recommended ORM: Prisma</h3>
+                    <p><strong>Why Prisma?</strong></p>
+                    <ul>
+                        <li>Type-safe queries (auto-generated TypeScript types from schema)</li>
+                        <li>Migration management (<code>prisma migrate</code>)</li>
+                        <li>Excellent DX (developer experience)</li>
+                        <li>Works well with Node.js + Express (recommended stack)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Class Structure (Example: User Entity)</h3>
+                    <pre><code>// Prisma schema (schema.prisma)
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String   @map("password_hash")
+  klasherName   String   @unique @map("klasher_name")
+  tier          UserTier @default(KLASHER)
+  pointsTotal   Int      @default(0) @map("points_total")
+
+  // Relations
+  tracks        Track[]  @relation("UserTracks")
+  playlists     Playlist[]
+  wallet        Wallet?  @relation("UserWallet")
+  participations KlashParticipation[]
+  followers     Follow[] @relation("Following")
+  following     Follow[] @relation("Follower")
+
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+enum UserTier {
+  KLASHER
+  INDEPENDENT
+  SUPER
+}
+
+// Generated TypeScript type (auto-generated by Prisma)
+// Use in controllers/services:
+import { User, Prisma } from '@prisma/client'
+
+// Service layer example
+class UserService {
+  async createUser(data: Prisma.UserCreateInput): Promise<User> {
+    return prisma.user.create({ data })
+  }
+
+  async getUserWithWallet(userId: string): Promise<User & { wallet: Wallet }> {
+    return prisma.user.findUnique({
+      where: { id: userId },
+      include: { wallet: true }
+    })
+  }
+}</code></pre>
+
+                    <h3 class="mt-3">Transaction Atomicity Example</h3>
+                    <p>Critical for wallet operations (NF06 requirement):</p>
+                    <pre><code>// Gifting coins: User A → User B (atomic)
+async function giftCoins(fromUserId: string, toUserId: string, amount: number) {
+  return await prisma.$transaction(async (tx) => {
+    // 1. Get wallets
+    const fromWallet = await tx.wallet.findUnique({ where: { userId: fromUserId } })
+    const toWallet = await tx.wallet.findUnique({ where: { userId: toUserId } })
+
+    if (fromWallet.balance < amount) throw new Error('Insufficient balance')
+
+    // 2. Create transaction record
+    const transaction = await tx.transaction.create({
+      data: {
+        type: 'GIFT',
+        fromWalletId: fromWallet.id,
+        toWalletId: toWallet.id,
+        amount: amount,
+        status: 'COMPLETED'
+      }
+    })
+
+    // 3. Update balances atomically
+    await tx.wallet.update({
+      where: { id: fromWallet.id },
+      data: { balance: { decrement: amount } }
+    })
+
+    await tx.wallet.update({
+      where: { id: toWallet.id },
+      data: { balance: { increment: amount } }
+    })
+
+    return transaction
+  })
+  // If ANY step fails, entire transaction rolls back
+}</code></pre>
+
+                    <h3 class="mt-3">Polymorphic Association (Wallet)</h3>
+                    <pre><code>// Prisma doesn't natively support polymorphic associations
+// Workaround: Nullable FKs + CHECK constraint (database-level)
+
+model Wallet {
+  id         String   @id @default(uuid())
+  ownerType  OwnerType @map("owner_type")
+  userId     String?  @map("user_id")
+  klashId    String?  @map("klash_id")
+  balance    Decimal  @default(0) @db.Decimal(10, 2)
+
+  user       User?    @relation(fields: [userId], references: [id])
+  klash      Klash?   @relation(fields: [klashId], references: [id])
+
+  @@map("wallets")
+}
+
+enum OwnerType {
+  USER
+  KLASH
+}
+
+// Application-level validation in service:
+class WalletService {
+  async createWallet(ownerId: string, ownerType: 'USER' | 'KLASH') {
+    if (ownerType === 'USER') {
+      return prisma.wallet.create({
+        data: { ownerType: 'USER', userId: ownerId }
+      })
+    } else {
+      return prisma.wallet.create({
+        data: { ownerType: 'KLASH', klashId: ownerId }
+      })
+    }
+  }
+}</code></pre>
+                </div>
+            </section>
+
+            <!-- Migration Strategy -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Migration Strategy</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Phase 2 Build Order (Database Perspective)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Tables to Create</th>
+                                <th>Epic</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1st</td>
+                                <td><code>users</code></td>
+                                <td>Epic 1: User Accounts</td>
+                            </tr>
+                            <tr>
+                                <td>2nd</td>
+                                <td><code>genres</code>, <code>tracks</code>, <code>playlists</code>, <code>playlist_tracks</code></td>
+                                <td>Epic 2: Music Library</td>
+                            </tr>
+                            <tr>
+                                <td>3rd</td>
+                                <td><code>klashes</code>, <code>klash_participations</code>, <code>votes</code></td>
+                                <td>Epic 3: Klashing</td>
+                            </tr>
+                            <tr>
+                                <td>4th</td>
+                                <td><code>wallets</code>, <code>transactions</code></td>
+                                <td>Epic 8: Wallet</td>
+                            </tr>
+                            <tr>
+                                <td>5th</td>
+                                <td><code>follows</code>, <code>messages</code></td>
+                                <td>Epic 5, 6: Social</td>
+                            </tr>
+                            <tr>
+                                <td>6th</td>
+                                <td><code>tournaments</code></td>
+                                <td>Epic 4: Tournaments</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Seed Data (Required)</h3>
+                    <ul>
+                        <li><strong>genres:</strong> 14 genres (Reggae, Metal, House, Punk, Soul, Rock, R&B, Indie, Jazz, Hip Hop, International, Classical, Pop, British underground)</li>
+                        <li><strong>Test users:</strong> At least 3 users (one per tier: KLASHER, INDEPENDENT, SUPER) for development</li>
+                    </ul>
+
+                    <h3 class="mt-3">Index Strategy</h3>
+                    <p>Critical indexes (already included in schema above):</p>
+                    <ul>
+                        <li><code>users(email)</code>, <code>users(klasher_name)</code> — Unique lookups (auth)</li>
+                        <li><code>tracks(artist_user_id)</code>, <code>tracks(genre_id)</code> — Browse/filter</li>
+                        <li><code>klashes(state)</code> — Live klash queries (Forums)</li>
+                        <li><code>votes(klash_id)</code> — Vote tally aggregation</li>
+                        <li><code>transactions(from_wallet_id, created_at DESC)</code> — Transaction history</li>
+                        <li>Composite: <code>(klash_id, user_id)</code> for uniqueness constraints</li>
+                    </ul>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

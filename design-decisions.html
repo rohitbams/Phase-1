@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Design Decisions Log — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html" class="active">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html">Epic Hierarchy</a></li>
+                    <li><a href="data-model.html">Data Model &amp; ERD</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Design Decisions Log</h1>
+            <p class="page-subtitle">Architectural and Design Decisions | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Overview -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Document Purpose</h2>
+                </div>
+                <div class="card-body">
+                    <p>This document records every significant architectural and design decision with rationale and alternatives considered.</p>
+
+                    <h3>Decision Structure</h3>
+                    <p>Each decision includes:</p>
+                    <ul>
+                        <li><strong>ID</strong> — Unique reference (DD-XXX)</li>
+                        <li><strong>Decision</strong> — What was chosen</li>
+                        <li><strong>Status</strong> — Proposed / Approved / Working Assumption</li>
+                        <li><strong>Context</strong> — Why this decision was needed</li>
+                        <li><strong>Rationale</strong> — Why this option was chosen</li>
+                        <li><strong>Alternatives Considered</strong> — What else was evaluated</li>
+                        <li><strong>Consequences</strong> — Trade-offs and implications</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Status Summary -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Decision Status Summary</h2>
+                </div>
+                <div class="card-body">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Count</th>
+                                <th>Decisions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge badge-completed">APPROVED</span></td>
+                                <td>5</td>
+                                <td>DD-001, DD-005, DD-006, DD-009, DD-010</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-in-progress">PROPOSED</span></td>
+                                <td>4</td>
+                                <td>DD-002, DD-007, DD-008, DD-011</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge badge-blocked">WORKING ASSUMPTION</span></td>
+                                <td>2</td>
+                                <td>DD-003, DD-004</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="mt-3"><strong>BLOCKING:</strong> DD-003 and DD-004 require Lincoln + legal advisor confirmation before Phase 2.</p>
+                </div>
+            </section>
+
+            <!-- DD-001 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-001: API-First, Client-Agnostic Backend Architecture</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-completed">APPROVED</span> | <strong>Date:</strong> 5 March 2026 | <strong>Source:</strong> <a href="../Information Sources/Meeting_minutes_5_3_26.docx">Meeting Minutes 5 March 2026</a></p>
+
+                    <h3>Decision</h3>
+                    <p>KO will be built with an API-first architecture where:</p>
+                    <ul>
+                        <li>All business logic resides server-side in a RESTful API</li>
+                        <li>Web and future mobile clients are thin presentation layers consuming the same API</li>
+                        <li>No web-specific logic in frontend — all must be portable</li>
+                    </ul>
+
+                    <h3 class="mt-3">Context</h3>
+                    <p>Meeting minutes (5 March 2026) revealed:</p>
+                    <ul>
+                        <li>Website built first, app developer hired later</li>
+                        <li>Website targets DJs/artists (desktop users)</li>
+                        <li>App targets everyday users/spectators (mobile users)</li>
+                    </ul>
+                    <p>This was buried in meeting notes and not mentioned in BRD — yet it is the <strong>most consequential architectural decision</strong> in the project.</p>
+
+                    <blockquote class="mt-3">
+                        <p>"App and platform will be have to be sequenced. Rohit will work on the website. An App Developer needs to be hired for the App"</p>
+                        <p>"Two types of Users; website – connoisseurs, artists and DJ's (always use their laptops). App – everyday users and spectators."</p>
+                        <cite>— Meeting Minutes, 5 March 2026</cite>
+                    </blockquote>
+
+                    <h3 class="mt-3">Rationale</h3>
+                    <ul>
+                        <li>Future app developer can build on existing backend without re-engineering business logic</li>
+                        <li>Web and mobile serve different populations but access same data/functionality</li>
+                        <li>Enables potential third-party integrations</li>
+                        <li>Industry best practice for modern multi-platform applications</li>
+                    </ul>
+
+                    <h3 class="mt-3">Alternatives Considered</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Monolithic web app</td>
+                                <td>Faster initial development</td>
+                                <td>App developer must rebuild everything</td>
+                                <td>❌ Not viable</td>
+                            </tr>
+                            <tr>
+                                <td>Backend-for-Frontend (BFF)</td>
+                                <td>Optimized per client</td>
+                                <td>Duplicated logic, harder to maintain</td>
+                                <td>❌ Over-engineered</td>
+                            </tr>
+                            <tr>
+                                <td>API-first</td>
+                                <td>Portable, future-proof, clean separation</td>
+                                <td>Requires upfront API design discipline</td>
+                                <td>✅ Selected</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ App developer can start work immediately without backend changes</li>
+                        <li>✅ Clean separation of concerns</li>
+                        <li>✅ API can be versioned for backward compatibility</li>
+                        <li>⚠️ Requires upfront API contract design (OpenAPI/Swagger spec)</li>
+                        <li>⚠️ Frontend cannot make direct database queries</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Related Decisions:</strong> DD-002 (Technology Stack), DD-005 (Authentication)</p>
+                </div>
+            </section>
+
+            <!-- DD-002 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-002: Technology Stack Recommendation</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-in-progress">PROPOSED</span> | <strong>Date:</strong> 20 July 2026</p>
+
+                    <h3>Proposed Stack</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Layer</th>
+                                <th>Technology</th>
+                                <th>Rationale</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Backend API</td>
+                                <td>Node.js + Express.js</td>
+                                <td>JavaScript full-stack; WebSocket support; fast development</td>
+                            </tr>
+                            <tr>
+                                <td>Database</td>
+                                <td>PostgreSQL</td>
+                                <td>ACID-compliant (NF06); strong JSON support; horizontal scaling</td>
+                            </tr>
+                            <tr>
+                                <td>Real-Time</td>
+                                <td>Socket.io</td>
+                                <td>Mature; room-based pub/sub; auto-fallback to polling</td>
+                            </tr>
+                            <tr>
+                                <td>Cache</td>
+                                <td>Redis</td>
+                                <td>In-memory performance; leaderboards; session management</td>
+                            </tr>
+                            <tr>
+                                <td>Frontend (Web)</td>
+                                <td>React + TypeScript</td>
+                                <td>Industry standard; type safety; large talent pool</td>
+                            </tr>
+                            <tr>
+                                <td>File Storage</td>
+                                <td>AWS S3</td>
+                                <td>Music files; CDN distribution; 99.99% uptime</td>
+                            </tr>
+                            <tr>
+                                <td>Payment</td>
+                                <td>Stripe Connect</td>
+                                <td>FCA-licensed; marketplace payouts</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Context</h3>
+                    <p>Stack must satisfy:</p>
+                    <ul>
+                        <li>NF03 (10K concurrent users)</li>
+                        <li>NF01/NF02 (500ms API response, 200ms real-time events)</li>
+                        <li>NF06 (ACID financial transactions)</li>
+                        <li>API-first architecture (DD-001)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Alternatives Considered</h3>
+                    <p><strong>Backend:</strong></p>
+                    <ul>
+                        <li><strong>Python (Django/Flask):</strong> Excellent for data-heavy apps; slightly slower real-time</li>
+                        <li><strong>Go:</strong> Fastest performance; smaller ecosystem; steeper learning curve</li>
+                        <li><strong>Node.js:</strong> ✅ Best balance of performance, ecosystem, JavaScript full-stack</li>
+                    </ul>
+
+                    <p><strong>Database:</strong></p>
+                    <ul>
+                        <li><strong>MongoDB:</strong> Flexible schema; not ACID-compliant (fails NF06)</li>
+                        <li><strong>MySQL:</strong> ACID-compliant; weaker JSON support</li>
+                        <li><strong>PostgreSQL:</strong> ✅ ACID + JSON + horizontal scaling</li>
+                    </ul>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ JavaScript full-stack reduces context switching</li>
+                        <li>✅ Large talent pool for future hires</li>
+                        <li>✅ Proven stack for real-time applications</li>
+                        <li>⚠️ Node.js requires careful async/await error handling</li>
+                        <li>⚠️ PostgreSQL requires schema migrations</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- DD-003 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-003: Wallet as Internal Double-Entry Ledger</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-blocked">WORKING ASSUMPTION</span> | <strong>Date:</strong> 20 July 2026</p>
+                    <p class="alert alert-critical">⚠️ <strong>MUST CONFIRM WITH LINCOLN</strong> — See C01 in Conflict Register</p>
+
+                    <h3>Decision (Working Assumption)</h3>
+                    <p>Klash Coin implemented as <strong>internal double-entry ledger</strong> with 1:1 fiat backing, NOT blockchain/Ethereum.</p>
+
+                    <h3 class="mt-3">Data Model</h3>
+                    <ul>
+                        <li><code>Wallet</code> entity (belongs to User or Klash)</li>
+                        <li><code>Transaction</code> entity with two foreign keys to Wallet (debit-from, credit-to)</li>
+                        <li>Every transaction debits one wallet, credits another (ACID constraint)</li>
+                        <li><code>Wallet.balance</code> is computed field (SUM of credited - debited transactions)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Context</h3>
+                    <p>Direct contradiction in source documents:</p>
+                    <ul>
+                        <li><strong>BRD:</strong> "Ethereum system, KO will create its own blockchain"</li>
+                        <li><strong>Wallet & Coin UX doc:</strong> "1 to 1 fiat rate backed by users"</li>
+                    </ul>
+
+                    <h3 class="mt-3">Rationale for Double-Entry</h3>
+                    <ol>
+                        <li>Wallet & Coin UX doc is more recent and describes fiat-like behavior</li>
+                        <li>1:1 fiat backing is FCA-compliant — clear regulatory path</li>
+                        <li>Blockchain adds no value — KO Coin not traded externally</li>
+                        <li>Double-entry is gold standard for financial systems (500+ years)</li>
+                        <li>ACID transactions (NF06) trivially satisfied by PostgreSQL</li>
+                    </ol>
+
+                    <h3 class="mt-3">Alternatives Considered</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Ethereum Smart Contract</td>
+                                <td>Trendy; self-custody</td>
+                                <td>Volatile value; gas fees; unclear UK regulation</td>
+                                <td>❌ Incompatible with 1:1 fiat</td>
+                            </tr>
+                            <tr>
+                                <td>Custom Blockchain</td>
+                                <td>Full control</td>
+                                <td>Months of development; no clear benefit</td>
+                                <td>❌ Over-engineered</td>
+                            </tr>
+                            <tr>
+                                <td>Double-Entry Ledger</td>
+                                <td>ACID-compliant; FCA-compatible; battle-tested</td>
+                                <td>Less "innovative"</td>
+                                <td>✅ Selected</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ FCA compliance via e-money regulations</li>
+                        <li>✅ ACID transactions guaranteed (satisfies NF06)</li>
+                        <li>✅ No gas fees, instant transactions</li>
+                        <li>✅ Can partner with Stripe/Mangopay for FCA license</li>
+                        <li>⚠️ Must implement reconciliation checks (daily balance audit)</li>
+                        <li>⚠️ Must handle concurrency correctly (database-level locking)</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Related Decisions:</strong> DD-004 (FCA Compliance), DD-009 (Transaction Types)</p>
+                </div>
+            </section>
+
+            <!-- DD-004 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-004: FCA Compliance — Partner with Licensed Provider</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-blocked">WORKING ASSUMPTION</span> | <strong>Date:</strong> 20 July 2026</p>
+                    <p class="alert alert-critical">⚠️ <strong>MUST CONFIRM WITH LINCOLN + LEGAL ADVISOR</strong></p>
+
+                    <h3>Recommendation</h3>
+                    <p>KO partners with <strong>licensed e-money provider</strong> (Stripe Connect, Mangopay) rather than applying for own FCA license.</p>
+
+                    <h3 class="mt-3">Context</h3>
+                    <p>Klash Coin (if 1:1 fiat-backed) constitutes <strong>e-money</strong> under UK Electronic Money Regulations 2011. KO must either:</p>
+                    <ol>
+                        <li>Register with FCA as e-money institution</li>
+                        <li>Partner with existing licensed provider</li>
+                    </ol>
+
+                    <h3 class="mt-3">Rationale</h3>
+                    <ul>
+                        <li><strong>Time to market:</strong> Partnering is significantly faster than FCA registration</li>
+                        <li><strong>Compliance burden:</strong> Provider handles AML/KYC, PCI DSS, reporting</li>
+                        <li><strong>Focus:</strong> KO can focus on product, not regulatory paperwork</li>
+                        <li><strong>Technical integration:</strong> Well-documented APIs (Stripe Connect, Mangopay)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Recommended Providers</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>Strengths</th>
+                                <th>Pricing</th>
+                                <th>Suitability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Stripe Connect</td>
+                                <td>Market leader; excellent API; marketplace payouts</td>
+                                <td>2.9% + 20p per transaction</td>
+                                <td>✅ Best for Phase 1</td>
+                            </tr>
+                            <tr>
+                                <td>Mangopay</td>
+                                <td>Europe-focused; e-wallet native</td>
+                                <td>1.8% + 18c per transaction</td>
+                                <td>✅ Lower fees</td>
+                            </tr>
+                            <tr>
+                                <td>PayPal Payouts</td>
+                                <td>Ubiquitous; trusted</td>
+                                <td>Higher fees; clunky API</td>
+                                <td>⚠️ Backup</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ Launch-ready in weeks, not years</li>
+                        <li>✅ FCA compliance handled by provider</li>
+                        <li>✅ Proven, secure infrastructure</li>
+                        <li>⚠️ Per-transaction fees (1.8-2.9%) — factor into pricing</li>
+                        <li>⚠️ Dependent on provider (but Stripe/Mangopay are stable)</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Related Decisions:</strong> DD-003 (Wallet Model), DD-010 (Cash-Out Flow)</p>
+                </div>
+            </section>
+
+            <!-- DD-005 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-005: Authentication Strategy — JWT with Refresh Tokens</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-completed">APPROVED</span> | <strong>Date:</strong> 20 July 2026</p>
+
+                    <h3>Decision</h3>
+                    <p>Authentication uses <strong>JWT (JSON Web Tokens)</strong> with refresh tokens for session management.</p>
+
+                    <h3 class="mt-3">Flow</h3>
+                    <ol>
+                        <li>User logs in with email + password</li>
+                        <li>Backend returns <strong>access token</strong> (JWT, 1-hour expiry) + <strong>refresh token</strong> (7-day expiry, stored in DB)</li>
+                        <li>Frontend includes access token in <code>Authorization: Bearer &lt;token&gt;</code> header</li>
+                        <li>When access token expires, frontend requests new one using refresh token</li>
+                        <li>If refresh token invalid/expired, user must log in again</li>
+                    </ol>
+
+                    <h3 class="mt-3">Rationale</h3>
+                    <ul>
+                        <li><strong>Stateless:</strong> JWT contains user ID + role, no server-side session lookup</li>
+                        <li><strong>Secure:</strong> Short-lived access tokens limit damage if leaked</li>
+                        <li><strong>Revocable:</strong> Refresh tokens in DB can be revoked (logout/ban)</li>
+                        <li><strong>Industry standard:</strong> Used by Google, GitHub, Auth0</li>
+                    </ul>
+
+                    <h3 class="mt-3">Alternatives Considered</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Session cookies</td>
+                                <td>Simple; revocable</td>
+                                <td>Requires server-side session store; harder to scale</td>
+                                <td>❌ Less scalable</td>
+                            </tr>
+                            <tr>
+                                <td>JWT only (no refresh)</td>
+                                <td>Simplest</td>
+                                <td>Long-lived tokens are security risk</td>
+                                <td>❌ Fails NF05</td>
+                            </tr>
+                            <tr>
+                                <td>JWT + Refresh</td>
+                                <td>Secure; scalable; revocable</td>
+                                <td>Slightly more complex</td>
+                                <td>✅ Selected</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ Satisfies NF05 (secure authentication)</li>
+                        <li>✅ Horizontal scaling (no shared session state)</li>
+                        <li>✅ Mobile app can use same auth system</li>
+                        <li>⚠️ Must implement token refresh logic in frontend</li>
+                        <li>⚠️ Must store refresh tokens securely (hashed in DB)</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- DD-006 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-006: Real-Time Architecture — WebSockets with Room-Based Pub/Sub</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-completed">APPROVED</span> | <strong>Date:</strong> 20 July 2026</p>
+
+                    <h3>Decision</h3>
+                    <p>Real-time events (chat, votes, klash state changes) use <strong>WebSockets (Socket.io)</strong> with <strong>room-based pub/sub</strong>.</p>
+
+                    <h3 class="mt-3">Architecture</h3>
+                    <ol>
+                        <li>Each Klash creates unique "room" (identified by <code>klashId</code>)</li>
+                        <li>When user joins klash, WebSocket client joins the room</li>
+                        <li>Backend broadcasts events to all clients in room (O(N) fan-out)</li>
+                        <li>Clients maintain optimistic UI updates with server reconciliation</li>
+                    </ol>
+
+                    <h3 class="mt-3">Room Types</h3>
+                    <ul>
+                        <li><code>klash:{klashId}</code> — all participants</li>
+                        <li><code>user:{userId}</code> — personal notifications</li>
+                        <li><code>lobby:{genreId}</code> — matchmaking queue</li>
+                    </ul>
+
+                    <h3 class="mt-3">Rationale</h3>
+                    <ul>
+                        <li>Socket.io is mature, handles fallback to polling</li>
+                        <li>Room-based limits broadcast scope</li>
+                        <li>Sub-200ms latency achievable (satisfies NF02)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Alternatives Considered</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>HTTP Long Polling</td>
+                                <td>Works everywhere</td>
+                                <td>High latency (1-2s); inefficient</td>
+                                <td>❌ Fails NF02</td>
+                            </tr>
+                            <tr>
+                                <td>Server-Sent Events (SSE)</td>
+                                <td>Simple; one-way</td>
+                                <td>No client→server; browser limit</td>
+                                <td>❌ Not suitable for chat</td>
+                            </tr>
+                            <tr>
+                                <td>WebSockets (Socket.io)</td>
+                                <td>Low latency; bidirectional; mature</td>
+                                <td>Requires persistent connections</td>
+                                <td>✅ Selected</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ Satisfies NF02 (≤200ms real-time event delivery)</li>
+                        <li>✅ Satisfies NF03 (10K concurrent users — scales with Redis adapter)</li>
+                        <li>✅ Excellent developer experience</li>
+                        <li>⚠️ Must handle connection drops gracefully</li>
+                        <li>⚠️ Scaling beyond 10K requires Redis pub/sub adapter</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- DD-009 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-009: Transaction Types as Single Entity</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-completed">APPROVED</span> | <strong>Date:</strong> 20 July 2026</p>
+
+                    <h3>Decision</h3>
+                    <p>All wallet transactions (top-up, gift, purchase, entry fee, winnings, cash-out) stored in <strong>single <code>Transaction</code> table</strong> with <code>type</code> discriminator.</p>
+
+                    <h3 class="mt-3">Schema</h3>
+                    <pre><code>CREATE TABLE transactions (
+  id UUID PRIMARY KEY,
+  type VARCHAR(50) NOT NULL,
+  from_wallet_id UUID REFERENCES wallets(id),
+  to_wallet_id UUID REFERENCES wallets(id),
+  amount DECIMAL(10,2) NOT NULL,
+  status VARCHAR(20) NOT NULL,
+  metadata JSONB,
+  created_at TIMESTAMP NOT NULL
+);</code></pre>
+
+                    <h3 class="mt-3">Rationale</h3>
+                    <ul>
+                        <li><strong>Single source of truth:</strong> All transactions in one table simplifies queries</li>
+                        <li><strong>ACID:</strong> Single table makes atomic constraints easier</li>
+                        <li><strong>Audit trail:</strong> Unified transaction log for regulatory reporting</li>
+                        <li><strong>Flexible:</strong> <code>metadata</code> JSONB allows transaction-specific data</li>
+                    </ul>
+
+                    <h3 class="mt-3">Alternatives Considered</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Alternative</th>
+                                <th>Pros</th>
+                                <th>Cons</th>
+                                <th>Verdict</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Separate tables per type</td>
+                                <td>Clearer schema per type</td>
+                                <td>Fragmented audit trail; complex queries</td>
+                                <td>❌ Over-normalized</td>
+                            </tr>
+                            <tr>
+                                <td>Single table with discriminator</td>
+                                <td>Unified audit trail; simpler queries</td>
+                                <td>Nullable columns</td>
+                                <td>✅ Selected</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ Easy to generate full wallet history</li>
+                        <li>✅ Regulatory reporting simplified</li>
+                        <li>⚠️ Must enforce referential integrity via application logic</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- DD-010 -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">DD-010: Wallet Balance as Computed Field</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-completed">APPROVED</span> | <strong>Date:</strong> 20 July 2026</p>
+
+                    <h3>Decision</h3>
+                    <p><code>Wallet.balance</code> is <strong>stored</strong> (denormalized) but <strong>recomputable</strong> from transactions.</p>
+
+                    <h3 class="mt-3">Justification</h3>
+                    <ul>
+                        <li><strong>Performance:</strong> Showing balance is most frequent query; computing SUM(transactions) every time is slow</li>
+                        <li><strong>Consistency:</strong> Balance updated atomically within same transaction that creates <code>Transaction</code> record</li>
+                        <li><strong>Auditability:</strong> Balance can be recomputed and compared to stored value (daily reconciliation)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Implementation</h3>
+                    <pre><code>CREATE TABLE wallets (
+  id UUID PRIMARY KEY,
+  user_id UUID REFERENCES users(id),
+  klash_id UUID REFERENCES klashes(id),
+  owner_type VARCHAR(20) NOT NULL,
+  balance DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+  currency VARCHAR(3) NOT NULL DEFAULT 'GBP',
+  created_at TIMESTAMP NOT NULL
+);</code></pre>
+
+                    <h3 class="mt-3">Consequences</h3>
+                    <ul>
+                        <li>✅ O(1) balance lookup (satisfies NF01)</li>
+                        <li>⚠️ Must update balance atomically</li>
+                        <li>⚠️ Requires daily reconciliation job to detect balance drift</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Related Decisions:</strong> DD-003 (Double-Entry Ledger), DD-009 (Transaction Types)</p>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>

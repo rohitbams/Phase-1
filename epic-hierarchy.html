@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Epic Hierarchy — KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1 class="sidebar-title">KlashOut</h1>
+            <p class="sidebar-subtitle">Phase 1 Discovery</p>
+        </div>
+        <nav class="sidebar-nav">
+            <div class="nav-section">
+                <div class="nav-section-title">Overview</div>
+                <ul class="nav-list">
+                    <li><a href="index.html">Home</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Documentation</div>
+                <ul class="nav-list">
+                    <li><a href="conflicts.html">Conflict Register</a></li>
+                    <li><a href="questions-for-lincoln.html">Questions for Lincoln</a></li>
+                    <li><a href="design-decisions.html">Design Decisions</a></li>
+                    <li><a href="system-design.html">System Design Document</a></li>
+                    <li><a href="epic-hierarchy.html" class="active">Epic Hierarchy</a></li>
+                    <li><a href="reference.html">Reference Tables</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <div class="nav-section-title">Source Files</div>
+                <ul class="nav-list">
+                    <li><a href="documents/Conflict_Register.md">Conflict Register (MD)</a></li>
+                    <li><a href="documents/Questions_for_Lincoln.md">Questions (MD)</a></li>
+                    <li><a href="documents/Design_Decisions_Log.md">Decisions (MD)</a></li>
+                    <li><a href="documents/System_Design_Document_Draft.md">SDD (MD)</a></li>
+                </ul>
+            </div>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <img src="assets/boxSpinningForever.gif" alt="KlashOut Logo" class="header-logo">
+            <h1 class="page-title">Epic Hierarchy & Build Order</h1>
+            <p class="page-subtitle">Feature Organization & Implementation Sequence | 20 July 2026</p>
+        </header>
+
+        <div class="container">
+            <!-- Introduction -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Document Purpose</h2>
+                </div>
+                <div class="card-body">
+                    <p>An <strong>Epic</strong> is a large body of work that breaks down into individual user stories. This document shows how KO's 12 epics are organized and the recommended build sequence for Phase 2 implementation.</p>
+
+                    <h3>Why Build Order Matters</h3>
+                    <p>You build <strong>epic by epic</strong>, not feature by feature. Some epics are foundational (User Accounts) — everything else depends on them. Others are peripheral (Music Social) — they can wait until the core platform is stable.</p>
+
+                    <p class="alert alert-info mt-3"><strong>Key Principle:</strong> Build infrastructure first, then core game loop, then social features, then monetization extensions.</p>
+                </div>
+            </section>
+
+            <!-- Visual Hierarchy -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic Structure</h2>
+                </div>
+                <div class="card-body">
+                    <pre><code>KO Platform (Initiative)
+│
+├── <strong>Epic 1: User Account Management</strong> 🔴 FOUNDATION
+├── <strong>Epic 2: Music Library & Song Selection</strong> 🔴 FOUNDATION
+├── <strong>Epic 3: Klashing — Core Game</strong> 🔴 CORE LOOP
+│   ├── Game Setup
+│   ├── Matchmaking
+│   ├── Game Flow (State Machine)
+│   ├── Voting & Result
+│   └── Points & Post-Klash
+├── <strong>Epic 4: Tournament Formats</strong> 🟡 EXTENSION
+│   ├── Round Robin
+│   ├── Swiss System
+│   ├── Single/Double Elimination
+│   └── Free-For-All
+├── <strong>Epic 5: User Profile & Social Feed</strong> 🟡 SOCIAL
+├── <strong>Epic 6: Messaging</strong> 🟡 SOCIAL
+├── <strong>Epic 7: Playlist Management</strong> 🟢 ORGANIZATION
+├── <strong>Epic 8: Klash Coin & Wallet</strong> 🔴 MONETIZATION
+├── <strong>Epic 9: Go Live</strong> 🟢 ADVANCED
+├── <strong>Epic 10: Nudge Play</strong> 🟢 TACTICAL
+├── <strong>Epic 11: Forums & Discovery</strong> 🟡 DISCOVERY
+└── <strong>Epic 12: Music Social</strong> 🟢 PERIPHERAL</code></pre>
+
+                    <h3 class="mt-3">Legend</h3>
+                    <ul>
+                        <li>🔴 <strong>Critical Path</strong> — Must be built for MVP</li>
+                        <li>🟡 <strong>High Priority</strong> — Important for platform completeness</li>
+                        <li>🟢 <strong>Lower Priority</strong> — Can be deferred to later phases</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Recommended Build Order -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Recommended Build Sequence (Phase 2)</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Phase 2A: Foundation (Weeks 1-4)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Epic</th>
+                                <th>Why Build First</th>
+                                <th>Delivers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1st</strong></td>
+                                <td><strong>Epic 1: User Accounts</strong></td>
+                                <td>Every feature sits behind authentication. No accounts = no platform.</td>
+                                <td>Users table, JWT auth, tier system (RBAC)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2nd</strong></td>
+                                <td><strong>Epic 2: Music Library</strong></td>
+                                <td>No music = no klash. Build storage + streaming before game logic.</td>
+                                <td>Track entity, S3 storage, CDN streaming, upload pipeline</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Phase 2B: Core Game Loop (Weeks 5-10)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Epic</th>
+                                <th>Why Build Now</th>
+                                <th>Delivers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>3rd</strong></td>
+                                <td><strong>Epic 3: Klashing</strong></td>
+                                <td>This is the product. Build the core game loop before any extensions.</td>
+                                <td>Matchmaking, real-time game state (WebSockets), voting, results, points system</td>
+                            </tr>
+                            <tr>
+                                <td><strong>4th</strong></td>
+                                <td><strong>Epic 8: Wallet (Basic)</strong></td>
+                                <td>Monetization is critical. Build top-up + basic wallet after core game works.</td>
+                                <td>Wallet entity, Stripe integration, transaction ledger, top-up flow</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Phase 2C: Social Layer (Weeks 11-14)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Epic</th>
+                                <th>Why Build Now</th>
+                                <th>Delivers</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>5th</strong></td>
+                                <td><strong>Epic 5: Profile & Feed</strong></td>
+                                <td>Users need identity and social proof. Profile aggregates all other data.</td>
+                                <td>Profile page, stats aggregation, news feed, follower system</td>
+                            </tr>
+                            <tr>
+                                <td><strong>6th</strong></td>
+                                <td><strong>Epic 11: Forums</strong></td>
+                                <td>Discovery layer — users need to find active klashes to spectate.</td>
+                                <td>Live klash browser, genre-based forums, spectate flow</td>
+                            </tr>
+                            <tr>
+                                <td><strong>7th</strong></td>
+                                <td><strong>Epic 7: Playlists</strong></td>
+                                <td>Organization tool — helps users prepare for klashes.</td>
+                                <td>Playlist CRUD, klash playlist loading, sharing</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Phase 2D: Extensions (Weeks 15+)</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Order</th>
+                                <th>Epic</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>8th</strong></td>
+                                <td><strong>Epic 6: Messaging</strong></td>
+                                <td>🟡 Important but not blocking</td>
+                                <td>Standard feature, well-understood pattern (WebSockets)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>9th</strong></td>
+                                <td><strong>Epic 4: Tournaments</strong></td>
+                                <td>🟡 Start with 1 format (Swiss or Elimination)</td>
+                                <td>Complex bracket logic — build incrementally</td>
+                            </tr>
+                            <tr>
+                                <td><strong>10th</strong></td>
+                                <td><strong>Epic 10: Nudge Play</strong></td>
+                                <td>⚠️ BLOCKED — mechanic undefined</td>
+                                <td>Cannot design until Lincoln defines what "nudge" does (see Q2.2)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>11th</strong></td>
+                                <td><strong>Epic 9: Go Live</strong></td>
+                                <td>🟢 Advanced — requires WebRTC</td>
+                                <td>Video streaming on top of audio streaming — significant complexity</td>
+                            </tr>
+                            <tr>
+                                <td><strong>12th</strong></td>
+                                <td><strong>Epic 12: Music Social</strong></td>
+                                <td>🟢 Nice-to-have</td>
+                                <td>Music snippet messaging, recommendation engine — defer to later phase</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <p class="alert alert-warning mt-3"><strong>Note:</strong> The above sequence is a recommendation. Lincoln may prioritize differently based on business goals.</p>
+                </div>
+            </section>
+
+            <!-- Epic Details -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic 1: User Account Management</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-must-have">FOUNDATION</span> <span class="badge badge-completed">MUST BUILD 1ST</span></p>
+
+                    <h3>Engineering Overview</h3>
+                    <p>The account system is the <strong>foundation of everything</strong>. Every other feature in KO sits behind authentication. Before a user can klash, listen to music, send a coin, or follow anyone — they need an account.</p>
+
+                    <h3 class="mt-3">Key Technical Components</h3>
+                    <ul>
+                        <li><strong>Users table</strong> — Core entity that all other tables foreign-key to</li>
+                        <li><strong>Authentication strategy</strong> — JWT tokens (recommended) or OAuth provider</li>
+                        <li><strong>Tier system (RBAC)</strong> — Klasher / Independent / Super permissions</li>
+                        <li><strong>Password hashing</strong> — bcrypt (cost factor 12)</li>
+                        <li><strong>Privacy settings</strong> — Profile visibility, blocking</li>
+                    </ul>
+
+                    <h3 class="mt-3">Dependencies</h3>
+                    <p><strong>None</strong> — This is the first epic built. Everything else depends on it.</p>
+
+                    <h3 class="mt-3">Architecture Impact</h3>
+                    <p>The Klasher tier system gates feature access across the entire app. A poor implementation here creates technical debt that ripples through every other epic.</p>
+
+                    <p class="mt-3"><strong>Source:</strong> <a href="documents/KO_Requirements_Document.md">KO_Requirements_Document.md</a> — Epic 1</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic 2: Music Library & Song Selection</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-must-have">FOUNDATION</span> <span class="badge badge-completed">MUST BUILD 2ND</span></p>
+
+                    <h3>Engineering Overview</h3>
+                    <p>The music library is the <strong>content layer</strong> of KO. Without music, there is no Klash. This epic directly intersects with <strong>Domain Requirement D01</strong> (music licensing) — the library cannot go live without appropriate rights clearance.</p>
+
+                    <h3 class="mt-3">Key Technical Components</h3>
+                    <ul>
+                        <li><strong>Object storage (S3)</strong> — Music files are large binaries, not stored in PostgreSQL</li>
+                        <li><strong>CDN layer</strong> — CloudFront or Cloudflare for streaming performance</li>
+                        <li><strong>Chunked streaming</strong> — Audio must stream progressively, not download fully first</li>
+                        <li><strong>Upload pipeline</strong> — Format validation, transcoding, indexing</li>
+                        <li><strong>Genre entity</strong> — Controlled vocabulary referenced by Track and Klash</li>
+                    </ul>
+
+                    <h3 class="mt-3">Dependencies</h3>
+                    <ul>
+                        <li><strong>Epic 1 (User Accounts)</strong> — Track.artist_user_id foreign key</li>
+                        <li><strong>Domain Requirement D01</strong> — Music licensing confirmed</li>
+                    </ul>
+
+                    <h3 class="mt-3">Critical Decision</h3>
+                    <p class="alert alert-warning">Music library source at launch: <strong>Independent Klasher uploads only</strong> (recommended) vs licensed major-label catalogue (requires PPL/PRS licenses). See <a href="questions-for-lincoln.html">Q1.2</a>.</p>
+
+                    <p class="mt-3"><strong>Source:</strong> <a href="documents/KO_Requirements_Document.md">KO_Requirements_Document.md</a> — Epic 2</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic 3: Klashing — Core Game</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-must-have">CORE LOOP</span> <span class="badge badge-completed">MUST BUILD 3RD</span></p>
+
+                    <h3>Engineering Overview</h3>
+                    <p>This is the <strong>heart of KO</strong>. The Klash game is what differentiates this platform from everything else. It is also the <strong>most technically complex epic</strong> in Phase 1 to design and Phase 2 to build.</p>
+
+                    <h3 class="mt-3">Core Technical Challenges</h3>
+                    <ul>
+                        <li><strong>Real-time synchronization</strong> — WebSockets (Socket.io) for state sync across all participants</li>
+                        <li><strong>State machine</strong> — 10-state flow (MATCHMAKING → READY → COUNTDOWN → PLAYING_1 → DECISION_WINDOW → PLAYING_2 → VOTING → CALCULATING → RESULT → COMPLETED)</li>
+                        <li><strong>Audio synchronization</strong> — All users must hear snippets simultaneously (sub-200ms latency requirement)</li>
+                        <li><strong>Voting system</strong> — Atomic vote recording, one vote per user, tally calculation</li>
+                        <li><strong>Result determination</strong> — Primary: audience vote; Fallback: algorithm (see <a href="questions-for-lincoln.html">Q2.1</a>)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Sub-Features</h3>
+                    <ul>
+                        <li><strong>Matchmaking</strong> — Pairing users by genre, waiting queue</li>
+                        <li><strong>Game Setup</strong> — Track selection, snippet duration (30/60/90s)</li>
+                        <li><strong>Klash chat</strong> — Temporary group chat during session</li>
+                        <li><strong>Points system</strong> — Win = +X points, Loss = -Y points (values TBD, see <a href="questions-for-lincoln.html">Q2.4</a>)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Dependencies</h3>
+                    <ul>
+                        <li><strong>Epic 1 (Accounts)</strong> — User authentication, tier permissions</li>
+                        <li><strong>Epic 2 (Music)</strong> — Track library, streaming infrastructure</li>
+                    </ul>
+
+                    <h3 class="mt-3">Architecture Impact</h3>
+                    <p>This epic drives your real-time architecture decisions: WebSocket library (Socket.io vs Pusher), room-based pub/sub, Redis for multi-server WebSocket scaling, state persistence strategy.</p>
+
+                    <p class="mt-3"><strong>Source:</strong> <a href="documents/KO_Requirements_Document.md">KO_Requirements_Document.md</a> — Epic 3</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic 8: Klash Coin & Wallet</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-must-have">MONETIZATION</span> <span class="badge badge-blocked">BLOCKING: C01</span></p>
+
+                    <h3>Engineering Overview</h3>
+                    <p>This is the <strong>most legally sensitive and financially complex epic</strong> in the entire project. Read <strong>Domain Requirements D02 and D03</strong> before approaching any wallet implementation decision.</p>
+
+                    <h3 class="mt-3">Critical Decision (BLOCKING)</h3>
+                    <p class="alert alert-critical">
+                        <strong>Fiat-backed vs Blockchain?</strong> See <a href="conflicts.html">Conflict C01</a>. This must be resolved before wallet can be designed.<br><br>
+                        <strong>Working assumption:</strong> 1:1 fiat-backed internal ledger with Stripe/Mangopay partnership (NOT blockchain).
+                    </p>
+
+                    <h3 class="mt-3">Key Technical Components (Fiat Approach)</h3>
+                    <ul>
+                        <li><strong>Double-entry ledger</strong> — Transaction table with from_wallet_id and to_wallet_id</li>
+                        <li><strong>Stripe Connect integration</strong> — Card processing, KYC/AML, FCA compliance</li>
+                        <li><strong>ACID transactions</strong> — PostgreSQL ensures zero unbalanced movements (NF06)</li>
+                        <li><strong>Transaction types</strong> — Single table, discriminated: TOP_UP, GIFT, MUSIC_PURCHASE, KLASH_ENTRY, KLASH_WINNINGS, HOST_FEE, CASH_OUT</li>
+                        <li><strong>Wallet.balance</strong> — Stored (for performance) but recomputable (for audit)</li>
+                        <li><strong>Daily reconciliation job</strong> — Compare stored balance vs SUM(transactions)</li>
+                    </ul>
+
+                    <h3 class="mt-3">Dependencies</h3>
+                    <ul>
+                        <li><strong>Epic 1 (Accounts)</strong> — Wallet belongs to User</li>
+                        <li><strong>Epic 3 (Klashing)</strong> — Klash winnings, entry fees, pot escrow</li>
+                        <li><strong>Domain Requirement D02</strong> — FCA e-money compliance confirmed</li>
+                    </ul>
+
+                    <h3 class="mt-3">Strong Recommendation</h3>
+                    <p><strong>Do not build a custom wallet from scratch.</strong> Use a regulated third-party provider (Stripe Connect, Mangopay) that is already FCA-authorised. This offloads: card processing, PCI DSS compliance, KYC/AML, e-money regulation, payouts, fraud prevention.</p>
+
+                    <p class="mt-3"><strong>Source:</strong> <a href="documents/KO_Requirements_Document.md">KO_Requirements_Document.md</a> — Epic 8</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic 4: Tournament Formats</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-should-have">EXTENSION</span></p>
+
+                    <h3>Engineering Overview</h3>
+                    <p>Tournament formats are <strong>structured competition systems</strong> that sit on top of the core Klash game. They organize multiple Klash matches into a structured event with a defined champion.</p>
+
+                    <h3 class="mt-3">Formats</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Format</th>
+                                <th>Complexity</th>
+                                <th>Recommendation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Single Elimination</strong></td>
+                                <td>Low</td>
+                                <td>✅ Build first — common, simple bracket logic</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Swiss System</strong></td>
+                                <td>Medium</td>
+                                <td>✅ Build second — good for competitive balance</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Round Robin</strong></td>
+                                <td>High</td>
+                                <td>⚠️ Impractical at scale (N² matches)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Free-For-All</strong></td>
+                                <td>Low</td>
+                                <td>✅ Simplest — just group klash</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3 class="mt-3">Technical Components</h3>
+                    <ul>
+                        <li><strong>Bracket/pairing engine</strong> — Match participants based on format rules</li>
+                        <li><strong>Round management</strong> — Track which round is active</li>
+                        <li><strong>Result aggregation</strong> — Calculate standings across multiple matches</li>
+                        <li><strong>Leaderboard</strong> — Real-time standings display</li>
+                    </ul>
+
+                    <h3 class="mt-3">Dependencies</h3>
+                    <ul>
+                        <li><strong>Epic 3 (Klashing)</strong> — Tournament is a container for multiple Klashes</li>
+                    </ul>
+
+                    <h3 class="mt-3">Recommendation</h3>
+                    <p>Build <strong>one format in Phase 2</strong> (Single Elimination or Swiss), validate with users, then add others incrementally in Phase 3.</p>
+
+                    <p class="mt-3"><strong>Source:</strong> <a href="documents/KO_Requirements_Document.md">KO_Requirements_Document.md</a> — Epic 4</p>
+                </div>
+            </section>
+
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic 10: Nudge Play</h2>
+                </div>
+                <div class="card-body">
+                    <p><span class="badge badge-blocked">BLOCKED</span> <span class="badge badge-could-have">TACTICAL</span></p>
+
+                    <h3>Status</h3>
+                    <p class="alert alert-critical">
+                        <strong>⚠️ CANNOT DESIGN OR BUILD</strong> — The game mechanic (what "nudging" actually does) is undefined.<br><br>
+                        See <a href="questions-for-lincoln.html">Q2.2</a> — this is the most critical open item in the requirements document.
+                    </p>
+
+                    <h3 class="mt-3">What We Know</h3>
+                    <ul>
+                        <li>Available in 60s and 90s klashes only</li>
+                        <li>Timing window: Can be used 10s into klash, NOT in last 10s</li>
+                        <li>FFA variant allows up to 3 nudge uses per participant</li>
+                        <li>Costs Klash Coins (amount TBD)</li>
+                    </ul>
+
+                    <h3 class="mt-3">What We Don't Know (Blocking)</h3>
+                    <p><strong>What does nudge actually DO to the game?</strong></p>
+                    <p>Possible mechanics to explore with Lincoln:</p>
+                    <ul>
+                        <li>Briefly interrupt opponent's audio playback (skip/mute)</li>
+                        <li>Temporarily hide vote count from opponent</li>
+                        <li>Force opponent's decision window to close early</li>
+                        <li>Allow nudger to play own snippet mid-game</li>
+                        <li>Visual distraction on opponent's screen</li>
+                    </ul>
+
+                    <h3 class="mt-3">Dependencies</h3>
+                    <ul>
+                        <li><strong>Epic 3 (Klashing)</strong> — Nudge is a tactical move within klash</li>
+                        <li><strong>Epic 8 (Wallet)</strong> — Nudge costs coins</li>
+                        <li><strong>Lincoln decision on mechanic</strong> — BLOCKING</li>
+                    </ul>
+
+                    <p class="mt-3"><strong>Source:</strong> <a href="documents/KO_Requirements_Document.md">KO_Requirements_Document.md</a> — Epic 10</p>
+                </div>
+            </section>
+
+            <!-- Remaining Epics Summary -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Other Epics (Summary)</h2>
+                </div>
+                <div class="card-body">
+                    <h3>Epic 5: User Profile & Social Feed</h3>
+                    <p><span class="badge badge-should-have">SOCIAL</span></p>
+                    <p><strong>Overview:</strong> Public identity aggregating stats from all other epics. Most join-heavy query in system (Users, Klashes, Followers, Playlists, Wallet). News feed requires push mechanism (WebSockets or polling).</p>
+                    <p><strong>Dependencies:</strong> Epic 1, 3, 7, 8</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Epic 6: Messaging</h3>
+                    <p><span class="badge badge-should-have">SOCIAL</span></p>
+                    <p><strong>Overview:</strong> Real-time private messaging between users. Requires WebSockets for instant delivery. Message storage at scale is a cost consideration.</p>
+                    <p><strong>Dependencies:</strong> Epic 1</p>
+                    <p><strong>Note:</strong> Distinct from Klash chat (F39) which is temporary group chat within game session.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Epic 7: Playlist Management</h3>
+                    <p><span class="badge badge-could-have">ORGANIZATION</span></p>
+                    <p><strong>Overview:</strong> Organizational tool for music. Klash Playlist is a game asset loaded into klash session. Many-to-many relationship: Track ↔ Playlist with ordering.</p>
+                    <p><strong>Dependencies:</strong> Epic 1, 2</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Epic 9: Go Live</h3>
+                    <p><span class="badge badge-could-have">ADVANCED</span></p>
+                    <p><strong>Overview:</strong> Video/audio streaming during klash. Requires WebRTC, media server (SFU), low-latency delivery. Go Live Showcase for Independent Klashers is standalone performance (Twitch-like).</p>
+                    <p><strong>Dependencies:</strong> Epic 1, 3</p>
+                    <p><strong>Complexity:</strong> Video streaming on top of existing audio streaming — significant technical addition.</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Epic 11: Forums & Discovery</h3>
+                    <p><span class="badge badge-should-have">DISCOVERY</span></p>
+                    <p><strong>Overview:</strong> Live klash browser — discovery layer for spectators. Genre-based forums, spectate flow. Technically interesting: F66 (put klash on hold) requires serializing complete game state.</p>
+                    <p><strong>Dependencies:</strong> Epic 3</p>
+                    <p><strong>Business rule:</strong> All live klashes must conclude within 24 hours (automated enforcement required).</p>
+
+                    <hr class="mt-3">
+
+                    <h3 class="mt-3">Epic 12: Music Social</h3>
+                    <p><span class="badge badge-could-have">PERIPHERAL</span></p>
+                    <p><strong>Overview:</strong> Music snippet messaging (send 30s snippet instead of text). Recommendation engine (collaborative filtering or content-based). Most algorithmically complex feature — ML-level problem.</p>
+                    <p><strong>Dependencies:</strong> Epic 1, 2, 6</p>
+                    <p><strong>Recommendation:</strong> Start with rule-based system ("top tracks in genres you've klashed in"), evolve to ML later.</p>
+                </div>
+            </section>
+
+            <!-- Dependency Graph -->
+            <section class="card">
+                <div class="card-header">
+                    <h2 class="card-title mb-0">Epic Dependency Graph</h2>
+                </div>
+                <div class="card-body">
+                    <p>This diagram shows which epics depend on others. Read bottom-up:</p>
+
+                    <pre><code>                    ┌──────────────┐
+                    │ Epic 12      │
+                    │ Music Social │ (depends on 1, 2, 6)
+                    └──────┬───────┘
+                           │
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+   ┌────▼─────┐     ┌──────▼──────┐    ┌─────▼────┐
+   │ Epic 9   │     │ Epic 10     │    │ Epic 11  │
+   │ Go Live  │     │ Nudge Play  │    │ Forums   │ (depends on 3)
+   └────┬─────┘     └──────┬──────┘    └─────┬────┘
+        │                  │                  │
+        └────────┬─────────┴────────┬─────────┘
+                 │                  │
+          ┌──────▼──────┐    ┌──────▼──────┐
+          │ Epic 4      │    │ Epic 5      │
+          │ Tournaments │    │ Profile     │ (depends on 1, 3, 7, 8)
+          └──────┬──────┘    └──────┬──────┘
+                 │                  │
+         ┌───────┴──────────────────┴───────┐
+         │                                  │
+    ┌────▼─────┐                      ┌─────▼────┐
+    │ Epic 3   │                      │ Epic 6   │
+    │ Klashing │ ◄─────────────────── │ Messaging│ (depends on 1)
+    └────┬─────┘                      └──────────┘
+         │
+         │                             ┌─────────┐
+         │                             │ Epic 7  │
+         │                             │ Playlist│ (depends on 1, 2)
+         │                             └─────┬───┘
+         │                                   │
+    ┌────▼─────┐     ┌────────────┐    ┌────▼─────┐
+    │ Epic 8   │     │ Epic 2     │    │          │
+    │ Wallet   │ ◄───┤ Music      │◄───┤          │
+    └────┬─────┘     └────┬───────┘    │          │
+         │                │             │          │
+         └────────┬───────┴─────────────┘          │
+                  │                                │
+             ┌────▼────────────────────────────────┘
+             │
+        ┌────▼─────┐
+        │ Epic 1   │
+        │ Accounts │ ◄─── FOUNDATION (build first)
+        └──────────┘</code></pre>
+
+                    <p class="mt-3"><strong>Key Insight:</strong> Epic 1 (Accounts) has zero dependencies. Epic 12 (Music Social) has the most dependencies. Build from bottom up.</p>
+                </div>
+            </section>
+        </div>
+
+        <footer class="footer">
+            <p>KlashOut Phase 1 Discovery | Technical Documentation | Prepared by Rohit Bamane | 20 July 2026</p>
+        </footer>
+    </div>
+
+    <script src="assets/js/navigation.js"></script>
+</body>
+</html>
