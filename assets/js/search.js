@@ -13,6 +13,7 @@ class DocumentationSearch {
     constructor() {
         this.pages = [
             'index.html',
+            'srs-complete.html',
             'conflicts.html',
             'questions-for-lincoln.html',
             'design-decisions.html',
