@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For Grace (UI/UX) - KlashOut Phase 1</title>
+    <link rel="stylesheet" href="assets/css/minimal.css">
+    <link rel="icon" type="image/jpeg" href="assets/favicon.jpeg">
+</head>
+<body class="has-sidebar">
+    <aside class="sidebar">
+        <div class="sidebar-title">Contents</div>
+        <nav>
+            <ul>
+                <li>
+                    <a href="#what-is-klashout">KlashOut</a>
+                    <ul>
+                        <li><a href="#user-tiers">User Tiers</a></li>
+                    </ul>
+                </li>
+                <li><a href="#features-at-a-glance">Features at a Glance</a></li>
+                <li>
+                    <a href="#views-by-tier">Views by Tier</a>
+                    <ul>
+                        <li><a href="#at-views">All Tiers (AT) — 33 Views</a>
+                            <ul>
+                                <li><a href="#authentication">1. Authentication (4 views)</a></li>
+                                <li><a href="#music-library">2. Music Library (5 views)</a></li>
+                                <li><a href="#klashing">3. Klashing (8 views)</a></li>
+                                <li><a href="#profile-social">4. Profile & Social (5 views)</a></li>
+                                <li><a href="#messaging">5. Messaging (2 views)</a></li>
+                                <li><a href="#wallet-economy">6. Wallet & Economy (5 views)</a></li>
+                                <li><a href="#leaderboards">7. Leaderboards (2 views)</a></li>
+                                <li><a href="#settings">8. Settings (3 views)</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#it-views">Independent Klasher and Above (IT) — 9 Views</a>
+                            <ul>
+                                <li><a href="#music-upload">9. Music Upload (4 views)</a></li>
+                                <li><a href="#go-live">10. Go Live (5 views)</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#st-views">Super Klasher Only (ST) — 5 Views</a>
+                            <ul>
+                                <li><a href="#entry-fee">11. Entry Fee & Stakes (1 view)</a></li>
+                                <li><a href="#tournaments">12. Tournaments (4 views)</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <a href="#tier-restrictions">Tier Restrictions</a>
+                    <ul>
+                        <li><a href="#locked-feature-behavior">Locked Feature Behavior</a></li>
+                        <li><a href="#features-locked-by-tier">Features Locked by Tier</a></li>
+                    </ul>
+                </li>
+                <li><a href="#wireframes-completed">Wireframes Completed by Grace</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">For Grace (UI/UX)</h1>
+            <p class="page-subtitle">Feature Specification & Views to Build</p>
+        </div>
+
+        <div class="nav-links">
+            <a href="home.html">← Back to Home</a>
+        </div>
+
+        <h2 id="what-is-klashout"># KlashOut</h2>
+        <p>KlashOut is a music battle competition platform where users compete in real-time "Klashes." Two users play 30/60/90-second song snippets, and spectators vote for the winner. Winners earn Klash Coins and climb leaderboards.</p>
+        <p><strong>Total views to build:</strong> 47 unique views across all features and tiers.</p>
+
+        <h3 id="user-tiers">User Tiers</h3>
+        <p>KlashOut has three user tiers. Each tier unlocks additional features.</p>
+
+        <h4 id="tier-labels">Tier Labels</h4>
+        <p><strong>AT</strong> = All Tiers (Klasher, Independent Klasher, Super Klasher)</p>
+        <p><strong>KT</strong> = Klasher Tier (Basic/Free tier only)</p>
+        <p><strong>IT</strong> = Independent Klasher Tier (Mid tier and above)</p>
+        <p><strong>ST</strong> = Super Klasher Tier (Premium tier only)</p>
+
+        <h4 id="tier-1">Tier 1: Klasher (Free)</h4>
+        <p>Access: Browse music, compete in klashes, vote, earn coins, spend coins in-app.</p>
+        <p>Restrictions: Cannot upload music, cash out, host group events, or go live.</p>
+
+        <h4 id="tier-2">Tier 2: Independent Klasher</h4>
+        <p>Access: Everything from Tier 1 plus upload music, monetize plays, host up to 50-person klashes, go live, cash out.</p>
+        <p>Restrictions: Cannot set entry fees, host tournaments, or earn hosting fees.</p>
+
+        <h4 id="tier-3">Tier 3: Super Klasher</h4>
+        <p>Access: Everything from Tier 2 plus host unlimited events, charge entry fees, run tournaments, earn hosting percentage, access analytics.</p>
+        <p>Restrictions: None.</p>
+
+        <h2 id="features-at-a-glance"># Features at a Glance</h2>
+        <ul>
+            <li>Authentication</li>
+            <li>Music Library</li>
+            <li>Klashing (core competition gameplay)</li>
+            <li>Profile & Social</li>
+            <li>Messaging</li>
+            <li>Wallet & Economy</li>
+            <li>Leaderboards</li>
+            <li>Settings</li>
+            <li>Music Upload (IT/ST only)</li>
+            <li>Go Live (IT/ST only)</li>
+            <li>Entry Fee & Stakes (ST only)</li>
+            <li>Tournaments (ST only)</li>
+        </ul>
+
+        <h2 id="views-by-tier"># Views by Tier</h2>
+
+        <h3 id="at-views">All Tiers (AT) — 33 Views</h3>
+
+        <h4 id="authentication">1. Authentication (4 views)</h4>
+        <ol>
+            <li>Landing Screen: App logo, tagline, Login button, Register button.</li>
+            <li>Login Screen: Email/phone input, password input, "Forgot password" link, Login button.</li>
+            <li>Registration Screen: Username input, email/phone input, password input, verification code input, Register button.</li>
+            <li>Password Reset: Email input, verification code input, new password input, Confirm button.</li>
+        </ol>
+
+        <h4 id="music-library">2. Music Library (5 views)</h4>
+        <ol>
+            <li>Browse Screen: Search bar, genre filters, song grid/list, persistent music player footer.</li>
+            <li>Search Results: Filtered song list, sorting options (popularity, recent, alphabetical).</li>
+            <li>Music Player: Song title, artist name, album art, play/pause, progress bar, volume, next/previous.</li>
+            <li>Playlists: Create playlist button, playlist grid/list, playlist detail view with songs.</li>
+            <li>Add to Playlist: Modal showing user's playlists, Create new playlist option.</li>
+        </ol>
+
+        <h4 id="klashing">3. Klashing (8 views)</h4>
+        <ol>
+            <li>Browse Klashes: Live klash cards showing title, participants, viewer count, "Live" badge, Join button.</li>
+            <li>Start a Klashout (Setup): Select song from library, title input, tags input, description textarea, duration selector (30/60/90 sec), cover image upload, participant limit, commenting toggle.</li>
+            <li>Matchmaking: Genre selection grid, duration selection (30/60/90 sec), "Go Online" button.</li>
+            <li>Waiting Screen: "Searching for opponent..." message, animated loading indicator, Cancel button.</li>
+            <li>Klash Playback & Voting: Two player cards (left/right), song title and artist for each, audio waveform visualization, countdown timer, current round indicator, Vote buttons (one per player), vote count per player, real-time vote updates, spectator count, comment stream.</li>
+            <li>Result Screen: Winner announcement, final vote count, coins won/lost, points gained, View History button, Play Again button.</li>
+            <li>Klash History: List of past klashes showing date, opponent, result (W/L/D), song used.</li>
+            <li>Direct Challenge: Search for user, Send Klash Request button, notification when request received.</li>
+        </ol>
+
+        <h4 id="profile-social">4. Profile & Social (5 views)</h4>
+        <ol>
+            <li>Profile Screen: Avatar, username, bio, join date, followers count, following count, win/loss/draw record, klash history, playlists.</li>
+            <li>Edit Profile: Avatar upload, username edit, bio textarea, privacy toggle (public/private), Save button.</li>
+            <li>Followers/Following: List of users with avatar, username, Follow/Unfollow button.</li>
+            <li>Notifications: Tabs for Likes, Comments, New Followers. List showing avatar, username, action, timestamp.</li>
+            <li>Follow Button: Toggle state (Follow/Following), tap to unfollow confirmation.</li>
+        </ol>
+
+        <h4 id="messaging">5. Messaging (2 views)</h4>
+        <ol>
+            <li>Messages Tab: List of conversations showing avatar, username, last message preview, timestamp, unread badge.</li>
+            <li>Conversation View: Message bubbles (sent/received), text input, Send button, timestamp per message. When starting a new message, includes user search field at top.</li>
+        </ol>
+
+        <h4 id="wallet-economy">6. Wallet & Economy (5 views)</h4>
+        <ol>
+            <li>Wallet Screen: Coin balance (large display), transaction history list, Top Up button, Cash Out button (IT/ST only).</li>
+            <li>Transaction History: List showing type (purchase/gift/winnings/cash-out), amount, date, from/to user.</li>
+            <li>Top Up Flow: Amount selector (preset amounts + custom), payment method selection, card input (via Stripe), Confirm button.</li>
+            <li>Cash Out Flow (IT/ST only): Amount input, bank account details, minimum amount warning, fee display, Confirm button.</li>
+            <li>Send Coins: User search, amount input, optional message, Send button.</li>
+        </ol>
+
+        <h4 id="leaderboards">7. Leaderboards (2 views)</h4>
+        <ol>
+            <li>Leaderboard Screen: Tabs for Global, Weekly, and by Genre (Hip-Hop, Rock, Funk, Independent Music, etc.).</li>
+            <li>Leaderboard List: Rank number, avatar, username, points, change indicator (up/down arrows).</li>
+        </ol>
+
+        <h4 id="settings">8. Settings (3 views)</h4>
+        <ol>
+            <li>Settings Menu: Privacy settings, notification preferences, account settings, help/terms, logout.</li>
+            <li>Privacy Settings: Profile visibility (public/private), message settings (everyone/followers only).</li>
+            <li>Upgrade Account: Tier comparison, pricing, Subscribe button (takes to payment flow).</li>
+        </ol>
+
+        <h3 id="it-views">Independent Klasher and Above (IT) — 9 Views</h3>
+
+        <h4 id="music-upload">9. Music Upload (4 views)</h4>
+        <ol>
+            <li>Upload Button: Center tab in bottom navigation (IT/ST only).</li>
+            <li>Upload Flow: Audio file picker, song name input, genre dropdown, artist name input, tags input, terms checkbox, Upload button.</li>
+            <li>Upload Progress: Progress bar, percentage, Cancel button.</li>
+            <li>Music Portfolio: List of uploaded songs with plays count, purchases amount, earnings amount.</li>
+        </ol>
+
+        <h4 id="go-live">10. Go Live (5 views)</h4>
+        <ol>
+            <li>Go Live Button: Primary action in profile menu (IT/ST only).</li>
+            <li>Go Live Setup: Stream title, cover image, genre, Start Live button.</li>
+            <li>Live Streaming (Performer): Camera feed, viewer count, comment stream, Gift notifications, End Stream button.</li>
+            <li>Live Viewing (Audience): Stream video, host name, viewer count, comment input, Send Gift button, Like button.</li>
+            <li>Live Indicator: "Live" badge on profile when user is streaming.</li>
+        </ol>
+
+        <h3 id="st-views">Super Klasher Only (ST) — 5 Views</h3>
+
+        <h4 id="entry-fee">11. Entry Fee & Stakes (1 view)</h4>
+        <ol>
+            <li>Entry Fee Input (on Start Klashout Setup): Entry fee amount input field (ST only, added to view 3.2).</li>
+        </ol>
+
+        <h4 id="tournaments">12. Tournaments (4 views)</h4>
+        <ol>
+            <li>Host Tournament Button: Primary action on Home screen (ST only).</li>
+            <li>Tournament Setup: Title, format selection (elimination/round-robin/swiss/free-for-all), entry fee, prize pool, participant limit, start time.</li>
+            <li>Tournament Bracket: Visual bracket showing matchups, current round, winners advancing, live status.</li>
+            <li>Tournament Dashboard: List of hosted tournaments, participant count, prize pool, engagement metrics.</li>
+        </ol>
+
+        <h2 id="tier-restrictions"># Tier Restrictions</h2>
+
+        <h3 id="locked-feature-behavior">Locked Feature Behavior</h3>
+        <p>When a user at a lower tier attempts to access a locked feature, the system should show an upgrade prompt. Locked features should be visible but disabled (greyed out or with a lock icon), not hidden.</p>
+
+        <h3 id="features-locked-by-tier">Features Locked by Tier</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Required Tier</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>"Upload your own music" button</td>
+                    <td>IT (Independent Klasher or above)</td>
+                </tr>
+                <tr>
+                    <td>Music portfolio (earnings view)</td>
+                    <td>IT (Independent Klasher or above)</td>
+                </tr>
+                <tr>
+                    <td>"Go Live" button</td>
+                    <td>IT (Independent Klasher or above)</td>
+                </tr>
+                <tr>
+                    <td>Cash-out to bank</td>
+                    <td>IT (Independent Klasher or above)</td>
+                </tr>
+                <tr>
+                    <td>Host klashes with 50+ participants</td>
+                    <td>IT (Independent Klasher or above)</td>
+                </tr>
+                <tr>
+                    <td>"Set entry fee" on klash setup</td>
+                    <td>ST (Super Klasher only)</td>
+                </tr>
+                <tr>
+                    <td>"Host a tournament" button</td>
+                    <td>ST (Super Klasher only)</td>
+                </tr>
+                <tr>
+                    <td>"My Dashboard" (analytics)</td>
+                    <td>ST (Super Klasher only)</td>
+                </tr>
+                <tr>
+                    <td>Host unlimited participants</td>
+                    <td>ST (Super Klasher only)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2 id="wireframes-completed"># Wireframes Completed by Grace</h2>
+        <p>22 wireframe slides covering approximately 50% of required views.</p>
+
+        <h3>Authentication (All Tiers)</h3>
+        <ul>
+            <li>Slide 1 — Landing Screen</li>
+            <li>Slide 2 — Login Screen</li>
+            <li>Slide 3 — Registration Screen</li>
+        </ul>
+
+        <h3>Leaderboards & Music Library (All Tiers)</h3>
+        <ul>
+            <li>Slides 4, 6, 7 — Leaderboard View (duplicates)</li>
+        </ul>
+
+        <h3>Browse Live Klashes (All Tiers)</h3>
+        <ul>
+            <li>Slides 8, 20 — Live Klashes Browse View</li>
+            <li>Slide 21 — Live Klashes Browse View + Host Tournament Button (ST only)</li>
+        </ul>
+
+        <h3>Notifications (All Tiers)</h3>
+        <ul>
+            <li>Slides 9, 11, 17 — Notifications View (duplicates)</li>
+        </ul>
+
+        <h3>Profile Views</h3>
+        <ul>
+            <li>Slide 10 — Profile View (Klasher/Basic Tier)
+                <br>⚠️ Issue: Shows upload button in bottom nav (should be IT/ST only)</li>
+            <li>Slide 13 — Music Portfolio View (Independent Klasher)</li>
+            <li>Slide 14 — Profile View (Independent Klasher)</li>
+            <li>Slide 19 — Profile View (Super Klasher)
+                <br>⚠️ Issue: Shows "Upgrade your account" button (should not appear - user is already at top tier)</li>
+        </ul>
+
+        <h3>Upload Music (IT/ST Only)</h3>
+        <ul>
+            <li>Slides 12, 16 — Upload Your Own Music Flow (duplicates)</li>
+        </ul>
+
+        <h3>Start a Klashout Setup (All Tiers)</h3>
+        <ul>
+            <li>Slides 5, 15, 22 — Start a Klashout Setup Form (duplicates)</li>
+        </ul>
+
+        <h3>Klash Insights (IT/ST Only)</h3>
+        <ul>
+            <li>Slide 18 — Past Klashes Insights View</li>
+        </ul>
+
+        <h3>Bottom Navigation Status</h3>
+        <ul>
+            <li>✓ Music (Slides 4, 6, 7)</li>
+            <li>✓ Start a Klashout (Slides 5, 15, 22)</li>
+            <li>✓ + Upload Your Own Music (Slides 12, 16)</li>
+            <li>✗ Messages (NOT DESIGNED - only notifications exist)</li>
+            <li>✓ Profile (Slides 10, 13, 14, 19)</li>
+        </ul>
+
+        <div class="footer">
+            <p><a href="home.html">← Back to Home</a></p>
+            <p>Prepared by Rohit Bamane | November 2026</p>
+        </div>
+    </div>
+</body>
+</html>
